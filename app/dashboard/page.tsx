@@ -1,0 +1,318 @@
+import { Metadata } from 'next'
+import Link from 'next/link'
+import { createServerClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { 
+  Trophy, Target, Calendar, TrendingUp, CheckCircle, Clock, 
+  Zap, Award, Eye, ChevronRight, Medal 
+} from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Dashboard | South Soccers Prediction League',
+  description: 'Your prediction dashboard',
+}
+
+export default async function DashboardPage() {
+  const supabase = await createServerClient()
+
+  // Check authentication
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    redirect('/login')
+  }
+
+  // Get user profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+
+  // Get user's leaderboard position
+  const { data: leaderboardData } = await supabase
+    .from('leaderboard')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+
+  // Get upcoming matches count
+  const { count: upcomingCount } = await supabase
+    .from('matches')
+    .select('*', { count: 'only', head: true })
+    .eq('status', 'upcoming')
+
+  // Get user's predictions count
+  const { count: predictionsCount } = await supabase
+    .from('predictions')
+    .select('*', { count: 'only', head: true })
+    .eq('user_id', user.id)
+
+  // Get recent predictions (last 5)
+  const { data: recentPredictions } = await supabase
+    .from('predictions')
+    .select(`
+      *,
+      matches:match_id (
+        home_team,
+        away_team,
+        competition_round,
+        status,
+        home_score,
+        away_score,
+        kickoff_time
+      )
+    `)
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(5)
+
+  // Get next 3 upcoming matches
+  const { data: nextMatches } = await supabase
+    .from('matches')
+    .select('*')
+    .eq('status', 'upcoming')
+    .order('kickoff_time', { ascending: true })
+    .limit(3)
+
+  const totalPoints = leaderboardData?.total_points || 0
+  const correctPredictions = leaderboardData?.correct_predictions || 0
+  const rank = leaderboardData?.rank || '-'
+  const totalPredictions = predictionsCount || 0
+
+  return (
+    <div className="relative min-h-screen bg-[#030306] overflow-hidden">
+      
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
+      <div className="absolute top-[-5%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#F3A81D]/6 blur-[150px] pointer-events-none animate-float-slow" />
+
+      <div className="container mx-auto px-4 py-8 md:py-12 max-w-7xl relative z-10">
+        
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-2">
+            Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3A81D] to-[#D80027]">{profile?.username}</span>
+          </h1>
+          <p className="text-[#8A92A6] text-sm">Your prediction command center</p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          
+          {/* Total Points */}
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#F3A81D]/40 transition-colors">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-[#F3A81D]/5 rounded-full blur-2xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-2">
+                <Trophy className="w-4 h-4 text-[#F3A81D]" />
+                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Points</p>
+              </div>
+              <p className="text-3xl font-black text-white">{totalPoints}</p>
+            </div>
+          </div>
+
+          {/* Rank */}
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#0052B4]/40 transition-colors">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-[#0052B4]/5 rounded-full blur-2xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-2">
+                <Medal className="w-4 h-4 text-[#0052B4]" />
+                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Rank</p>
+              </div>
+              <p className="text-3xl font-black text-white">#{rank}</p>
+            </div>
+          </div>
+
+          {/* Exact Predictions */}
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#10B981]/40 transition-colors">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-[#10B981]/5 rounded-full blur-2xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-2">
+                <Target className="w-4 h-4 text-[#10B981]" />
+                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Exact</p>
+              </div>
+              <p className="text-3xl font-black text-white">{correctPredictions}</p>
+            </div>
+          </div>
+
+          {/* Total Predictions */}
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#D80027]/40 transition-colors">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-[#D80027]/5 rounded-full blur-2xl" />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="w-4 h-4 text-[#D80027]" />
+                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Predictions</p>
+              </div>
+              <p className="text-3xl font-black text-white">{totalPredictions}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          
+          {/* Predict Matches */}
+          <Link href="/matches">
+            <div className="bg-gradient-to-br from-[#F3A81D]/10 to-[#D80027]/10 border border-[#F3A81D]/20 rounded-xl p-6 hover:border-[#F3A81D]/50 transition-all group cursor-pointer">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#F3A81D] to-[#D80027] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Zap className="w-6 h-6 text-white" />
+                </div>
+                <ChevronRight className="w-5 h-5 text-[#F3A81D] group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-lg font-black text-white uppercase mb-1">Predict Matches</h3>
+              <p className="text-sm text-[#8A92A6]">{upcomingCount} upcoming matches</p>
+            </div>
+          </Link>
+
+          {/* View Leaderboard */}
+          <Link href="/leaderboard">
+            <div className="bg-gradient-to-br from-[#0052B4]/10 to-[#003D8F]/10 border border-[#0052B4]/20 rounded-xl p-6 hover:border-[#0052B4]/50 transition-all group cursor-pointer">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#0052B4] to-[#003D8F] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+                <ChevronRight className="w-5 h-5 text-[#0052B4] group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-lg font-black text-white uppercase mb-1">Leaderboard</h3>
+              <p className="text-sm text-[#8A92A6]">See rankings & standings</p>
+            </div>
+          </Link>
+
+          {/* My Predictions */}
+          <Link href="/my-predictions">
+            <div className="bg-gradient-to-br from-[#10B981]/10 to-[#059669]/10 border border-[#10B981]/20 rounded-xl p-6 hover:border-[#10B981]/50 transition-all group cursor-pointer">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Eye className="w-6 h-6 text-white" />
+                </div>
+                <ChevronRight className="w-5 h-5 text-[#10B981] group-hover:translate-x-1 transition-transform" />
+              </div>
+              <h3 className="text-lg font-black text-white uppercase mb-1">My Predictions</h3>
+              <p className="text-sm text-[#8A92A6]">Review your picks</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* Upcoming Matches */}
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-[#F3A81D]" />
+                <h2 className="text-lg font-black text-white uppercase">Next Matches</h2>
+              </div>
+              <Link href="/matches" className="text-xs font-bold text-[#F3A81D] hover:text-[#FFD700] transition-colors">
+                View All
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {nextMatches && nextMatches.length > 0 ? (
+                nextMatches.map(match => {
+                  const kickoffDate = new Date(match.kickoff_time)
+                  return (
+                    <Link key={match.id} href={`/matches/${match.id}`}>
+                      <div className="bg-[#050508]/60 border border-white/5 rounded-lg p-4 hover:border-[#F3A81D]/30 transition-colors group cursor-pointer">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[9px] font-black text-[#F3A81D] uppercase tracking-wider">
+                            {match.competition_round}
+                          </span>
+                          <span className="text-[9px] text-[#8A92A6]">
+                            {kickoffDate.toLocaleDateString()} {kickoffDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 font-bold text-white text-sm">{match.home_team}</div>
+                          <div className="px-3 py-1 bg-white/5 rounded text-[10px] font-black text-[#8A92A6]">vs</div>
+                          <div className="flex-1 font-bold text-white text-sm text-right">{match.away_team}</div>
+                        </div>
+                      </div>
+                    </Link>
+                  )
+                })
+              ) : (
+                <div className="text-center py-8">
+                  <Clock className="w-8 h-8 text-[#8A92A6] mx-auto mb-2" />
+                  <p className="text-sm text-[#8A92A6]">No upcoming matches</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Recent Predictions */}
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Award className="w-5 h-5 text-[#0052B4]" />
+                <h2 className="text-lg font-black text-white uppercase">Recent Predictions</h2>
+              </div>
+              <Link href="/my-predictions" className="text-xs font-bold text-[#0052B4] hover:text-[#0066CC] transition-colors">
+                View All
+              </Link>
+            </div>
+
+            <div className="space-y-3">
+              {recentPredictions && recentPredictions.length > 0 ? (
+                recentPredictions.map((pred: any) => {
+                  const match = pred.matches
+                  const isFinished = match?.status === 'finished'
+                  const points = pred.points_earned || 0
+                  
+                  return (
+                    <div key={pred.id} className="bg-[#050508]/60 border border-white/5 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[9px] font-black text-[#8A92A6] uppercase tracking-wider">
+                          {match?.competition_round}
+                        </span>
+                        {isFinished && (
+                          <span className={`text-[9px] font-black uppercase tracking-wider ${
+                            points === 3 ? 'text-[#10B981]' : points === 1 ? 'text-[#F3A81D]' : 'text-[#8A92A6]'
+                          }`}>
+                            {points === 3 ? 'Exact' : points === 1 ? 'Correct' : 'Miss'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1">
+                          <div className="text-xs text-[#8A92A6] mb-1">{match?.home_team}</div>
+                          <div className="text-xs text-[#8A92A6]">{match?.away_team}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-black text-white">{pred.predicted_home}</div>
+                          <div className="text-sm font-black text-white">{pred.predicted_away}</div>
+                        </div>
+                        {isFinished && (
+                          <>
+                            <div className="text-[#8A92A6] text-xs">→</div>
+                            <div className="text-center">
+                              <div className="text-sm font-black text-[#F3A81D]">{match?.home_score}</div>
+                              <div className="text-sm font-black text-[#F3A81D]">{match?.away_score}</div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="text-center py-8">
+                  <Target className="w-8 h-8 text-[#8A92A6] mx-auto mb-2" />
+                  <p className="text-sm text-[#8A92A6] mb-3">No predictions yet</p>
+                  <Link href="/matches">
+                    <button className="text-xs px-4 py-2 bg-[#F3A81D]/10 hover:bg-[#F3A81D]/20 text-[#F3A81D] font-bold rounded-lg transition-colors">
+                      Make Your First Prediction
+                    </button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
