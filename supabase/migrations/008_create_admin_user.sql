@@ -1,0 +1,61 @@
+-- Migration: Create Admin User 'shamsear'
+-- Description: Creates an admin user named 'shamsear' with admin role
+-- 
+-- IMPORTANT: This migration creates the profile entry, but you still need to:
+-- 1. Create the actual auth user via Supabase Dashboard OR
+-- 2. Register via the app at /register and then run the UPDATE below
+--
+-- Option 1: Create via Supabase Dashboard (Recommended)
+-- ========================================================
+-- 1. Go to Supabase Dashboard -> Authentication -> Users
+-- 2. Click "Add User"
+-- 3. Email: shamsear@example.com (or your preferred email)
+-- 4. Password: (set a strong password)
+-- 5. Copy the user UUID that gets generated
+-- 6. Run this SQL, replacing 'YOUR_USER_UUID_HERE' with the actual UUID:
+--
+-- UPDATE public.profiles 
+-- SET role = 'admin' 
+-- WHERE id = 'YOUR_USER_UUID_HERE';
+--
+-- Option 2: Register via app first, then promote to admin
+-- ========================================================
+-- 1. Go to http://localhost:3000/register
+-- 2. Register with username: shamsear
+-- 3. After registration, find the user ID and run:
+--
+-- UPDATE public.profiles 
+-- SET role = 'admin' 
+-- WHERE username = 'shamsear';
+
+-- ============================================================================
+-- HELPER QUERY: Find user by username to promote to admin
+-- ============================================================================
+-- Run this to find the user after they've registered:
+-- 
+-- SELECT id, username, email, role 
+-- FROM public.profiles 
+-- JOIN auth.users ON profiles.id = users.id
+-- WHERE username = 'shamsear';
+--
+-- Then run this to promote to admin:
+--
+-- UPDATE public.profiles 
+-- SET role = 'admin' 
+-- WHERE username = 'shamsear';
+
+-- ============================================================================
+-- VERIFICATION QUERY
+-- ============================================================================
+-- After creating the admin user, verify with:
+-- 
+-- SELECT 
+--   p.id,
+--   p.username,
+--   u.email,
+--   p.role,
+--   p.created_at
+-- FROM public.profiles p
+-- JOIN auth.users u ON p.id = u.id
+-- WHERE p.role = 'admin';
+
