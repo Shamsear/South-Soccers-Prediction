@@ -90,8 +90,8 @@ export async function submitPrediction(
       }
 
       // Handle foreign key constraint (invalid match_id)
-      if (error.code === '23503') {
-        return { error: 'Invalid match. Please try again.' }
+      if (error.code === '23503' || error.message.includes('Match not found')) {
+        return { error: 'This match is not available. Please refresh the page or contact support.' }
       }
 
       // Generic error

@@ -6,27 +6,30 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 
 /**
- * Server action for user login with email and password
+ * Server action for user login with username and password
  * Requirements: 1.3 (User login), 1.4 (Invalid credentials error)
  */
 export async function loginAction(formData: FormData) {
-  const email = formData.get('email') as string
+  const username = formData.get('username') as string
   const password = formData.get('password') as string
 
-  if (!email || !password) {
-    return { error: 'Email and password are required' }
+  if (!username || !password) {
+    return { error: 'Username and password are required' }
   }
+
+  // Convert username to dummy email format (same as registration)
+  const email = `${username.trim().toLowerCase()}@southsoccers.com`
 
   const supabase = await createServerClient()
 
-  // Call Supabase Auth signInWithPassword
+  // Call Supabase Auth signInWithPassword using the generated email
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.trim(),
+    email,
     password,
   })
 
   if (error) {
-    return { error: error.message || 'Invalid credentials. Please try again.' }
+    return { error: 'Invalid username or password. Please try again.' }
   }
 
   if (data.session) {

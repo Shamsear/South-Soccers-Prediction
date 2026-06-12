@@ -4,7 +4,7 @@ import { useActionState, useState } from 'react'
 import { loginAction } from '@/app/actions/auth'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
-import { KeyRound, Mail, LogIn, Eye, EyeOff } from 'lucide-react'
+import { KeyRound, User, LogIn, Eye, EyeOff } from 'lucide-react'
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
@@ -42,20 +42,20 @@ export function LoginForm() {
 
       <form action={formAction} className="space-y-4">
         
-        {/* Email Address */}
+        {/* Username */}
         <div>
-          <label htmlFor="email" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-            <Mail className="w-4 h-4 text-[#F3A81D]" />
-            Email Address
+          <label htmlFor="username" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
+            <User className="w-4 h-4 text-[#F3A81D]" />
+            Username
           </label>
           <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="name@example.com"
+            id="username"
+            name="username"
+            type="text"
+            placeholder="johndoe123"
             disabled={isPending}
             required
-            autoComplete="email"
+            autoComplete="username"
             className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
           />
         </div>

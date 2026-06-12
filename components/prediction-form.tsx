@@ -37,29 +37,58 @@ export function PredictionForm({
   const [isPending, startTransition] = useTransition()
   const [isLocked, setIsLocked] = useState(initialLocked)
 
-  // Initialize with existing prediction or defaults
-  const [homeScore, setHomeScore] = useState(
-    existingPrediction?.predicted_home ?? 0
+  // Initialize with existing prediction or empty for new predictions
+  const [homeScore, setHomeScore] = useState<number | null>(
+    existingPrediction?.predicted_home ?? null
   )
-  const [awayScore, setAwayScore] = useState(
-    existingPrediction?.predicted_away ?? 0
+  const [awayScore, setAwayScore] = useState<number | null>(
+    existingPrediction?.predicted_away ?? null
   )
 
   // Increment/decrement handlers
   const incrementHome = () => {
-    if (homeScore < 15) setHomeScore(homeScore + 1)
+    const currentScore = homeScore ?? 0
+    if (currentScore < 15) setHomeScore(currentScore + 1)
   }
 
   const decrementHome = () => {
-    if (homeScore > 0) setHomeScore(homeScore - 1)
+    const currentScore = homeScore ?? 0
+    if (currentScore > 0) setHomeScore(currentScore - 1)
   }
 
   const incrementAway = () => {
-    if (awayScore < 15) setAwayScore(awayScore + 1)
+    const currentScore = awayScore ?? 0
+    if (currentScore < 15) setAwayScore(currentScore + 1)
   }
 
   const decrementAway = () => {
-    if (awayScore > 0) setAwayScore(awayScore - 1)
+    const currentScore = awayScore ?? 0
+    if (currentScore > 0) setAwayScore(currentScore - 1)
+  }
+
+  // Direct input handlers
+  const handleHomeScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    if (value === '') {
+      setHomeScore(null)
+      return
+    }
+    const numValue = parseInt(value, 10)
+    if (!isNaN(numValue) && numValue >= 0 && numValue <= 15) {
+      setHomeScore(numValue)
+    }
+  }
+
+  const handleAwayScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    if (value === '') {
+      setAwayScore(null)
+      return
+    }
+    const numValue = parseInt(value, 10)
+    if (!isNaN(numValue) && numValue >= 0 && numValue <= 15) {
+      setAwayScore(numValue)
+    }
   }
 
   // Handle form submission
@@ -71,8 +100,9 @@ export function PredictionForm({
       return
     }
 
-    if (existingPrediction) {
-      toast.error('You have already submitted a prediction for this match.')
+    // Validate that scores have been set
+    if (homeScore === null || awayScore === null) {
+      toast.error('Please set both team scores before submitting.')
       return
     }
 
@@ -86,7 +116,11 @@ export function PredictionForm({
         }
 
         if (result.success) {
-          toast.success('Prediction submitted successfully! 🎉')
+          if (existingPrediction) {
+            toast.success('Prediction updated successfully! 🎉')
+          } else {
+            toast.success('Prediction submitted successfully! 🎉')
+          }
           router.refresh()
         }
       } catch (error) {
@@ -96,18 +130,18 @@ export function PredictionForm({
     })
   }
 
-  const formDisabled = isLocked || isPending || !!existingPrediction
+  const formDisabled = isLocked || isPending
 
   return (
     <div className="w-full">
       <div className="text-center mb-8">
         <h3 className="text-xl font-heading font-black text-[#F3A81D] tracking-wider uppercase">
-          {existingPrediction ? 'Your Locked Prediction' : 'Submit Your Score Prediction'}
+          {existingPrediction ? 'Update Your Prediction' : 'Submit Your Score Prediction'}
         </h3>
         <div className="h-1 w-12 bg-[#F3A81D] mx-auto mt-3" />
       </div>
 
-      {isLocked && !existingPrediction && (
+      {isLocked && (
         <div className="bg-[#D80027]/10 border-2 border-[#D80027]/40 rounded p-4 mb-8 flex items-center justify-center gap-3">
           <Lock className="w-5 h-5 text-[#D80027] animate-pulse" />
           <p className="text-[#D80027] font-black text-xs uppercase tracking-wide">
@@ -116,11 +150,11 @@ export function PredictionForm({
         </div>
       )}
 
-      {existingPrediction && (
-        <div className="bg-emerald-950/20 border-2 border-emerald-500/40 rounded p-4 mb-8 flex items-center justify-center gap-3">
-          <CheckCircle className="w-5 h-5 text-emerald-400" />
-          <p className="text-emerald-400 font-black text-xs uppercase tracking-wide">
-            Prediction locked. Good luck!
+      {existingPrediction && !isLocked && (
+        <div className="bg-blue-950/20 border-2 border-blue-500/40 rounded p-4 mb-8 flex items-center justify-center gap-3">
+          <CheckCircle className="w-5 h-5 text-blue-400" />
+          <p className="text-blue-400 font-black text-xs uppercase tracking-wide">
+            You can still edit your prediction until kickoff
           </p>
         </div>
       )}
@@ -140,21 +174,28 @@ export function PredictionForm({
               <button
                 type="button"
                 onClick={decrementHome}
-                disabled={formDisabled || homeScore === 0}
+                disabled={formDisabled || (homeScore ?? 0) === 0}
                 aria-label={`Decrease ${homeTeam} score`}
                 className="w-10 h-10 flex items-center justify-center bg-[#161620] border-2 border-white/10 hover:border-white rounded text-[#C1C5D0] hover:text-white disabled:opacity-20 transition-all cursor-pointer shadow-md active:scale-90"
               >
                 <Minus className="w-4 h-4" />
               </button>
               
-              <div className="w-20 h-20 bg-black/60 border-2 border-[#F3A81D] rounded flex items-center justify-center text-4xl font-black text-white font-heading shadow-2xl">
-                {homeScore}
-              </div>
+              <input
+                type="number"
+                min="0"
+                max="15"
+                value={homeScore ?? ''}
+                onChange={handleHomeScoreChange}
+                disabled={formDisabled}
+                placeholder="-"
+                className="w-20 h-20 bg-black/60 border-2 border-[#F3A81D] rounded flex items-center justify-center text-4xl font-black text-white font-heading shadow-2xl text-center focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/50 disabled:opacity-50 placeholder:text-white/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
               
               <button
                 type="button"
                 onClick={incrementHome}
-                disabled={formDisabled || homeScore === 15}
+                disabled={formDisabled || (homeScore ?? 0) === 15}
                 aria-label={`Increase ${homeTeam} score`}
                 className="w-10 h-10 flex items-center justify-center bg-[#161620] border-2 border-white/10 hover:border-white rounded text-[#C1C5D0] hover:text-white disabled:opacity-20 transition-all cursor-pointer shadow-md active:scale-90"
               >
@@ -176,21 +217,28 @@ export function PredictionForm({
               <button
                 type="button"
                 onClick={decrementAway}
-                disabled={formDisabled || awayScore === 0}
+                disabled={formDisabled || (awayScore ?? 0) === 0}
                 aria-label={`Decrease ${awayTeam} score`}
                 className="w-10 h-10 flex items-center justify-center bg-[#161620] border-2 border-white/10 hover:border-white rounded text-[#C1C5D0] hover:text-white disabled:opacity-20 transition-all cursor-pointer shadow-md active:scale-90"
               >
                 <Minus className="w-4 h-4" />
               </button>
               
-              <div className="w-20 h-20 bg-black/60 border-2 border-[#F3A81D] rounded flex items-center justify-center text-4xl font-black text-white font-heading shadow-2xl">
-                {awayScore}
-              </div>
+              <input
+                type="number"
+                min="0"
+                max="15"
+                value={awayScore ?? ''}
+                onChange={handleAwayScoreChange}
+                disabled={formDisabled}
+                placeholder="-"
+                className="w-20 h-20 bg-black/60 border-2 border-[#F3A81D] rounded flex items-center justify-center text-4xl font-black text-white font-heading shadow-2xl text-center focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/50 disabled:opacity-50 placeholder:text-white/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
               
               <button
                 type="button"
                 onClick={incrementAway}
-                disabled={formDisabled || awayScore === 15}
+                disabled={formDisabled || (awayScore ?? 0) === 15}
                 aria-label={`Increase ${awayTeam} score`}
                 className="w-10 h-10 flex items-center justify-center bg-[#161620] border-2 border-white/10 hover:border-white rounded text-[#C1C5D0] hover:text-white disabled:opacity-20 transition-all cursor-pointer shadow-md active:scale-90"
               >
@@ -201,18 +249,19 @@ export function PredictionForm({
 
         </div>
 
-        {/* Submit Prediction */}
-        {!existingPrediction && (
-          <div className="flex justify-center max-w-xs mx-auto">
-            <button
-              type="submit"
-              disabled={formDisabled}
-              className="btn-tactile btn-tactile-red text-xs py-3.5 w-full flex items-center justify-center gap-2"
-            >
-              {isPending ? 'Locking in Score...' : 'Submit Prediction 🎯'}
-            </button>
-          </div>
-        )}
+        {/* Submit/Update Prediction */}
+        <div className="flex justify-center max-w-xs mx-auto">
+          <button
+            type="submit"
+            disabled={formDisabled}
+            className="btn-tactile btn-tactile-red text-xs py-3.5 w-full flex items-center justify-center gap-2"
+          >
+            {isPending 
+              ? (existingPrediction ? 'Updating...' : 'Locking in Score...') 
+              : (existingPrediction ? 'Update Prediction 🎯' : 'Submit Prediction 🎯')
+            }
+          </button>
+        </div>
       </form>
     </div>
   )

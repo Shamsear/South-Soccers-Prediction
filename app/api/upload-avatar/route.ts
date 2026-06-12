@@ -11,8 +11,12 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
+  console.log('=== UPLOAD AVATAR API ROUTE CALLED ===')
+  console.log('Request URL:', request.url)
+  console.log('Request method:', request.method)
+  
   try {
-    console.log('Upload API route called')
+    console.log('Upload API route - processing request')
     
     const body = await request.json()
     const { file, fileName } = body

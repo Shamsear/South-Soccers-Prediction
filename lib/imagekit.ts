@@ -7,18 +7,27 @@
 import ImageKit from 'imagekit'
 
 // Initialize ImageKit instance with error handling
-let imagekit: ImageKit
+let imagekit: ImageKit | null = null
 
 try {
-  imagekit = new ImageKit({
-    publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || '',
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY || '',
-    urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || '',
-  })
-  console.log('ImageKit initialized successfully')
+  // Check if required environment variables are present
+  if (
+    process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY &&
+    process.env.IMAGEKIT_PRIVATE_KEY &&
+    process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT
+  ) {
+    imagekit = new ImageKit({
+      publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
+      privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+      urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
+    })
+    console.log('ImageKit initialized successfully')
+  } else {
+    console.warn('ImageKit configuration missing - avatar uploads will be disabled')
+  }
 } catch (error) {
   console.error('Failed to initialize ImageKit:', error)
-  throw error
+  imagekit = null
 }
 
 /**
@@ -34,6 +43,15 @@ export async function uploadToImageKit(
   folder: string = 'avatars'
 ) {
   try {
+    // Check if ImageKit is initialized
+    if (!imagekit) {
+      console.error('ImageKit not initialized - check environment variables')
+      return {
+        success: false,
+        error: 'ImageKit service is not configured',
+      }
+    }
+
     // Validate ImageKit configuration
     if (!process.env.IMAGEKIT_PRIVATE_KEY || !process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || !process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT) {
       console.error('ImageKit configuration missing')
@@ -89,6 +107,13 @@ export async function uploadToImageKit(
  */
 export async function deleteFromImageKit(fileId: string) {
   try {
+    if (!imagekit) {
+      return {
+        success: false,
+        error: 'ImageKit service is not configured',
+      }
+    }
+    
     await imagekit.deleteFile(fileId)
     return { success: true }
   } catch (error) {

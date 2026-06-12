@@ -84,79 +84,83 @@ export default async function MyPredictionsPage() {
     : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0A0A0F] via-[#0F0F16] to-[#050508] relative py-12">
-      <div className="absolute inset-0 background-grid opacity-[0.08] pointer-events-none" />
+    <div className="relative min-h-screen bg-[#030306] py-12 overflow-hidden">
+      <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
 
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
         
-        {/* Navigation Action header */}
-        <div className="flex items-center justify-between mb-8">
+        {/* Back Link */}
+        <div className="mb-8">
           <Link
             href="/matches"
-            className="inline-flex items-center gap-1.5 text-[#FFD700] hover:text-white font-bold transition-colors group text-sm"
+            className="btn-tactile btn-tactile-outline text-[11px] py-2 px-4 flex items-center gap-1.5 w-max"
           >
-            <ChevronLeft className="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" />
+            <ChevronLeft className="w-4 h-4" />
             Back to Matches
           </Link>
-          <span className="text-xs font-black text-muted-foreground uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-            Prediction Dashboard
-          </span>
         </div>
 
         {/* Header */}
-        <div className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-[#FFA500] uppercase mb-3 tracking-tight">
+        <div className="mb-10">
+          <h1 className="text-4xl md:text-5xl font-black text-white uppercase mb-2 tracking-tight font-heading">
             My Predictions
           </h1>
-          <p className="text-foreground/75 text-lg">
-            Track your predictions history, scores, and performance statistics
+          <p className="text-[#8A92A6] text-sm font-bold">
+            Track your prediction history and performance statistics
           </p>
         </div>
 
         {/* Summary Statistics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          
           {/* Total Points */}
-          <Card className="glass-card border-[#FFD700]/15 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-3 text-[#FFD700]/5 select-none"><Trophy className="w-12 h-12" /></div>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-muted-foreground text-[10px] font-black uppercase tracking-wider">Total Points</CardDescription>
-              <CardTitle className="text-3xl font-black text-[#FFD700] font-heading">
-                {totalPoints}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <div className="bg-[#0E0E13] border-2 border-[#F3A81D]/20 rounded-xl p-5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-3 text-[#F3A81D]/5 select-none">
+              <Trophy className="w-16 h-16" />
+            </div>
+            <p className="text-[#8A92A6] text-[10px] font-black uppercase tracking-wider mb-2">
+              Total Points
+            </p>
+            <p className="text-4xl font-black text-[#F3A81D] font-heading relative z-10">
+              {totalPoints}
+            </p>
+          </div>
 
           {/* Total Predictions */}
-          <Card className="glass-card border-white/10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-3 text-white/5 select-none"><CalendarDays className="w-12 h-12" /></div>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-muted-foreground text-[10px] font-black uppercase tracking-wider">Submitted</CardDescription>
-              <CardTitle className="text-3xl font-black text-white font-heading">
-                {totalPredictions}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <div className="bg-[#0E0E13] border-2 border-white/5 rounded-xl p-5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-3 text-white/5 select-none">
+              <CalendarDays className="w-16 h-16" />
+            </div>
+            <p className="text-[#8A92A6] text-[10px] font-black uppercase tracking-wider mb-2">
+              Submitted
+            </p>
+            <p className="text-4xl font-black text-white font-heading relative z-10">
+              {totalPredictions}
+            </p>
+          </div>
 
           {/* Exact Scores */}
-          <Card className="glass-card border-green-500/10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-3 text-green-500/5 select-none"><Award className="w-12 h-12" /></div>
-            <CardHeader className="pb-2">
-              <CardDescription className="text-muted-foreground text-[10px] font-black uppercase tracking-wider">Exact Scores</CardDescription>
-              <CardTitle className="text-3xl font-black text-green-400 font-heading">
-                {exactScores}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <div className="bg-[#0E0E13] border-2 border-emerald-500/20 rounded-xl p-5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-3 text-emerald-500/5 select-none">
+              <Award className="w-16 h-16" />
+            </div>
+            <p className="text-[#8A92A6] text-[10px] font-black uppercase tracking-wider mb-2">
+              Exact Scores
+            </p>
+            <p className="text-4xl font-black text-emerald-400 font-heading relative z-10">
+              {exactScores}
+            </p>
+          </div>
 
           {/* Success Rate */}
-          <Card className="glass-card border-white/10 relative overflow-hidden">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-muted-foreground text-[10px] font-black uppercase tracking-wider">Success Rate</CardDescription>
-              <CardTitle className="text-3xl font-black text-white font-heading">
-                {successRate}%
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <div className="bg-[#0E0E13] border-2 border-[#0052B4]/20 rounded-xl p-5 relative overflow-hidden">
+            <p className="text-[#8A92A6] text-[10px] font-black uppercase tracking-wider mb-2">
+              Success Rate
+            </p>
+            <p className="text-4xl font-black text-[#0052B4] font-heading relative z-10">
+              {successRate}%
+            </p>
+          </div>
         </div>
 
         {/* Prediction List */}

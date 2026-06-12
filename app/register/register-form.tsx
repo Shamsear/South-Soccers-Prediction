@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { adminRegisterUser } from '@/app/actions/admin-register'
 import { toast } from 'sonner'
 import { KeyRound, Mail, User, ShieldAlert, Phone, UserCircle, Image as ImageIcon, Eye, EyeOff, Globe } from 'lucide-react'
 import { SearchableSelect } from '@/components/searchable-select'
@@ -12,7 +13,6 @@ export function RegisterForm() {
   const [isPending, startTransition] = useTransition()
   const [fullName, setFullName] = useState('')
   const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
   const [countryCode, setCountryCode] = useState('+1')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
@@ -230,19 +230,13 @@ export function RegisterForm() {
     e.preventDefault()
 
     // Validation
-    if (!fullName || !username || !email || !password) {
+    if (!fullName || !username || !password) {
       toast.error('Please fill in all required fields')
       return
     }
 
     if (fullName.trim().length < 2) {
       toast.error('Full name must be at least 2 characters')
-      return
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email.trim())) {
-      toast.error('Please enter a valid email address')
       return
     }
 
@@ -268,8 +262,6 @@ export function RegisterForm() {
 
     startTransition(async () => {
       try {
-        const supabase = createClient()
-
         // First, upload avatar to ImageKit if provided (optional, non-blocking)
         let avatarUrl: string | null = null
         
@@ -338,54 +330,46 @@ export function RegisterForm() {
         }
 
         // Continue with registration even if avatar upload fails
-        // Prepare user metadata
-        const userMetadata: Record<string, any> = {
-          full_name: fullName.trim(),
+        // Use admin API to bypass rate limits (temporary solution)
+        const result = await adminRegisterUser({
           username: username.trim(),
-          phone_number: phone.trim() ? `${countryCode}${phone.trim()}` : null,
-        }
-
-        // Only include avatar_url if upload succeeded
-        if (avatarUrl) {
-          userMetadata.avatar_url = avatarUrl
-          console.log('Registration will include avatar')
-        } else {
-          console.log('Registration will proceed without avatar')
-        }
-
-        // Register user with metadata
-        // The database trigger will handle profile creation atomically
-        const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
           password: password,
-          options: {
-            data: userMetadata,
-          },
+          fullName: fullName.trim(),
+          phoneNumber: phone.trim() ? `${countryCode}${phone.trim()}` : undefined,
+          avatarUrl: avatarUrl || undefined,
         })
 
-        if (error) {
-          if (error.message.toLowerCase().includes('already registered') || 
-              error.message.toLowerCase().includes('already exists') ||
-              error.status === 422) {
-            toast.error('This email is already registered. Please login instead.')
-            return
-          }
-          
-          toast.error(error.message || 'Registration failed. Please try again.')
+        if (!result.success) {
+          toast.error(result.error || 'Registration failed')
           return
         }
 
-        if (data.user) {
-          // Show success message
-          if (!avatarUrl && avatarFile) {
-            toast.success('Registration successful! (Avatar upload failed - you can update it later)')
-          } else {
-            toast.success('Registration successful! Welcome to South Soccers!')
-          }
-          
-          router.push('/matches')
-          router.refresh()
+        // Success! Now log the user in
+        const supabase = createClient()
+        const dummyEmail = `${username.trim().toLowerCase()}@southsoccers.com`
+        
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: dummyEmail,
+          password: password,
+        })
+
+        if (loginError) {
+          // Registration succeeded but login failed
+          toast.success('Registration successful! Please try logging in.')
+          router.push('/login')
+          return
         }
+
+        // Success! User can login immediately
+        if (!avatarUrl && avatarFile) {
+          toast.success('Registration successful! (Avatar upload failed - you can update it later)')
+        } else {
+          toast.success('Registration successful! Welcome to South Soccers!')
+        }
+        
+        // Redirect to matches page
+        router.push('/matches')
+        router.refresh()
       } catch (error) {
         console.error('Registration error:', error)
         toast.error('An unexpected error occurred. Please try again.')
@@ -470,25 +454,7 @@ export function RegisterForm() {
               maxLength={20}
               className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
             />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-              <Mail className="w-4 h-4 text-[#F3A81D]" />
-              Email Address <span className="text-[#D80027] ml-1">*</span>
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="john@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isPending}
-              required
-              autoComplete="email"
-              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
-            />
+            <p className="text-[10px] text-[#8A92A6] mt-1">This will be your login username</p>
           </div>
 
           {/* Phone Number with Country Code */}

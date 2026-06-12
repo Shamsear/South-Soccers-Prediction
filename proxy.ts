@@ -93,16 +93,11 @@ export async function proxy(request: NextRequest) {
 }
 
 // Configure which routes the proxy should run on
+// NOTE: This file is named proxy.ts not middleware.ts, so it should NOT run
+// If you want to enable this middleware, rename this file to middleware.ts
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     * - api routes (handled separately)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // API routes should NEVER be matched by middleware
+    '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
