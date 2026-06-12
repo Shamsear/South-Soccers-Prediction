@@ -15,6 +15,9 @@ export function NavLinks({ isAdmin }: NavLinksProps) {
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false)
   
   const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return pathname === path
+    }
     if (path === '/matches') {
       return pathname === path || pathname.startsWith('/matches/')
     }
@@ -142,6 +145,14 @@ export function NavLinks({ isAdmin }: NavLinksProps) {
       ) : (
         /* Regular User Navigation */
         <>
+          <NavLink 
+            href="/dashboard" 
+            icon={<Home className="w-4 h-4" />}
+            active={isActive('/dashboard')}
+          >
+            Dashboard
+          </NavLink>
+          
           <NavLink 
             href="/matches" 
             icon={<Calendar className="w-4 h-4" />}

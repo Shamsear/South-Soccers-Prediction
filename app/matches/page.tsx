@@ -12,6 +12,7 @@ import { AlertTriangle, Trophy, Calendar, Target } from 'lucide-react'
 import { MatchFixtureCard } from '@/components/match-fixture-card'
 import { MatchesFilter } from '@/components/matches-filter'
 import { AutoSyncMatches } from '@/components/auto-sync-matches'
+import { BulkPredictButton } from '@/components/bulk-predict-button'
 
 export const metadata: Metadata = {
   title: 'Matches | South Soccers Prediction League',
@@ -122,18 +123,23 @@ export default async function MatchesPage() {
         
         {/* Header */}
         <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D80027] to-[#8B0A1E] flex items-center justify-center">
-              <Trophy className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D80027] to-[#8B0A1E] flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F3A81D] to-white uppercase tracking-tight">
+                  Tournament Fixtures
+                </h1>
+                <p className="text-[#C1C5D0] text-sm mt-1">
+                  {totalMatches} total matches • Lock in predictions before kickoff
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F3A81D] to-white uppercase tracking-tight">
-                Tournament Fixtures
-              </h1>
-              <p className="text-[#C1C5D0] text-sm mt-1">
-                {totalMatches} total matches • Lock in predictions before kickoff
-              </p>
-            </div>
+            
+            {/* Bulk Predict Button */}
+            <BulkPredictButton matches={matchesWithPredictions} />
           </div>
         </div>
 

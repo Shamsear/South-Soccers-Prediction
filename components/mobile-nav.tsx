@@ -14,6 +14,9 @@ export function MobileNav({ user, profile, isAdmin }: MobileNavProps) {
   const pathname = usePathname()
 
   const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return pathname === path
+    }
     if (path === '/admin') {
       return pathname === path
     }
@@ -83,6 +86,14 @@ export function MobileNav({ user, profile, isAdmin }: MobileNavProps) {
               /* Regular User Mobile Nav - 5 items */
               <>
                 <Link
+                  href="/dashboard"
+                  className={`mobile-bottom-nav-item ${isActive('/dashboard') ? 'active' : ''}`}
+                >
+                  <Home className="w-[18px] h-[18px]" />
+                  <span>Home</span>
+                </Link>
+
+                <Link
                   href="/matches"
                   className={`mobile-bottom-nav-item ${isActive('/matches') || pathname.startsWith('/matches/') ? 'active' : ''}`}
                 >
@@ -104,14 +115,6 @@ export function MobileNav({ user, profile, isAdmin }: MobileNavProps) {
                 >
                   <Trophy className="w-[18px] h-[18px]" />
                   <span>Board</span>
-                </Link>
-
-                <Link
-                  href="/scoring-rules"
-                  className={`mobile-bottom-nav-item ${isActive('/scoring-rules') ? 'active' : ''}`}
-                >
-                  <Target className="w-[18px] h-[18px]" />
-                  <span>Rules</span>
                 </Link>
 
                 <Link

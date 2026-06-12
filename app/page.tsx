@@ -22,7 +22,7 @@ export default async function Home() {
     if (typedProfile?.role === 'admin') {
       redirect('/admin');
     } else {
-      redirect('/matches');
+      redirect('/dashboard');
     }
   }
 
