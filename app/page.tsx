@@ -63,7 +63,7 @@ export default async function Home() {
             <div className="inline-flex items-center gap-2.5 px-4 py-2 mb-8 rounded-full border border-[#F3A81D]/25 bg-[#F3A81D]/5 badge-pulse-ring">
               <span className="w-2 h-2 rounded-full bg-[#F3A81D] animate-pulse" />
               <span className="text-[11px] font-black text-[#F3A81D] tracking-[0.18em] uppercase">
-                FIFA World Cup 2026 — Live Now
+                FIFA World Cup 2026 - Live Now
               </span>
               <span className="w-2 h-2 rounded-full bg-[#F3A81D] animate-pulse" />
             </div>
@@ -106,18 +106,15 @@ export default async function Home() {
             <div className="divider-gradient" />
           </div>
 
-          {/* Host Nations Flags */}
+          {/* Host Nations */}
           <div className="hero-entrance hero-entrance-4 flex items-center justify-center gap-3 mb-6">
             <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#D80027]/8 border border-[#D80027]/20 rounded-full">
-              <span className="text-sm">🇨🇦</span>
               <span className="text-[9px] font-black text-[#D80027] tracking-wider uppercase">Canada</span>
             </div>
             <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#009A44]/8 border border-[#009A44]/20 rounded-full">
-              <span className="text-sm">🇲🇽</span>
               <span className="text-[9px] font-black text-[#009A44] tracking-wider uppercase">Mexico</span>
             </div>
             <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#0052B4]/8 border border-[#0052B4]/20 rounded-full">
-              <span className="text-sm">🇺🇸</span>
               <span className="text-[9px] font-black text-[#0052B4] tracking-wider uppercase">USA</span>
             </div>
           </div>
@@ -159,22 +156,20 @@ export default async function Home() {
 
         {/* ===== TOURNAMENT STATS CARDS ===== */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto mb-24 w-full">
-          {/* Card 1 — Tournament Dates */}
+          {/* Card 1 - Tournament Dates */}
           <div className="bg-[#0E0E13] border border-white/5 p-6 rounded-xl relative overflow-hidden card-hover-lift group hover:border-[#D80027]/40">
             <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#D80027] via-[#D80027]/50 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute top-0 right-0 p-4 font-black text-7xl text-white/[0.015] select-none leading-none">📅</div>
             <div className="w-12 h-12 rounded-lg bg-[#D80027]/10 flex items-center justify-center mb-4 border border-[#D80027]/20 group-hover:scale-110 transition-transform">
               <Calendar className="w-5 h-5 text-[#D80027]" />
             </div>
             <h3 className="text-sm font-black text-white mb-2 uppercase tracking-wider">Tournament Dates</h3>
-            <p className="text-2xl font-black text-[#F3A81D] stat-glow">June 11 — July 19</p>
+            <p className="text-2xl font-black text-[#F3A81D] stat-glow">June 11 - July 19</p>
             <p className="text-xs text-[#7A8299] mt-2 font-medium">104 matches across 3 host nations</p>
           </div>
 
-          {/* Card 2 — Teams */}
+          {/* Card 2 - Teams */}
           <div className="bg-[#0E0E13] border border-white/5 p-6 rounded-xl relative overflow-hidden card-hover-lift group hover:border-[#0052B4]/40">
             <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#0052B4] via-[#0052B4]/50 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute top-0 right-0 p-4 font-black text-7xl text-white/[0.015] select-none leading-none">🌍</div>
             <div className="w-12 h-12 rounded-lg bg-[#0052B4]/10 flex items-center justify-center mb-4 border border-[#0052B4]/20 group-hover:scale-110 transition-transform">
               <Globe className="w-5 h-5 text-[#0052B4]" />
             </div>
@@ -183,10 +178,9 @@ export default async function Home() {
             <p className="text-xs text-[#7A8299] mt-2 font-medium">Expanded format with 12 groups</p>
           </div>
 
-          {/* Card 3 — Points */}
+          {/* Card 3 - Points */}
           <div className="bg-[#0E0E13] border border-white/5 p-6 rounded-xl relative overflow-hidden card-hover-lift group hover:border-[#009A44]/40">
             <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#009A44] via-[#009A44]/50 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute top-0 right-0 p-4 font-black text-7xl text-white/[0.015] select-none leading-none">🎯</div>
             <div className="w-12 h-12 rounded-lg bg-[#009A44]/10 flex items-center justify-center mb-4 border border-[#009A44]/20 group-hover:scale-110 transition-transform">
               <Target className="w-5 h-5 text-[#009A44]" />
             </div>
@@ -201,7 +195,7 @@ export default async function Home() {
           <div className="max-w-5xl mx-auto mb-24 w-full">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-black text-white uppercase mb-2 tracking-wide">
-                🏆 Current Leaders
+                Current Leaders
               </h2>
               <p className="text-[#8A92A6] text-base">
                 Top performers earning bragging rights
@@ -217,17 +211,17 @@ export default async function Home() {
                 const isThird = rank === 3;
 
                 let podiumClass = 'podium-silver md:w-60 h-44 order-2 md:order-1';
-                let trophyBadge = '🥈';
                 let badgeText = 'RANK 2';
+                let medalIcon = <Award className="w-6 h-6 text-[#C0C0C0]" />;
 
                 if (isFirst) {
                   podiumClass = 'podium-gold md:w-64 h-52 order-1 md:order-2 scale-105';
-                  trophyBadge = '👑';
                   badgeText = 'CHAMPION';
+                  medalIcon = <Trophy className="w-6 h-6 text-[#F3A81D]" />;
                 } else if (isThird) {
                   podiumClass = 'podium-bronze md:w-56 h-36 order-3';
-                  trophyBadge = '🥉';
                   badgeText = 'RANK 3';
+                  medalIcon = <Award className="w-6 h-6 text-[#CD7F32]" />;
                 }
 
                 return (
@@ -242,7 +236,7 @@ export default async function Home() {
                     </div>
 
                     <div className="flex-1 flex flex-col items-center justify-center pt-2">
-                      <span className="text-2xl mb-2">{trophyBadge}</span>
+                      <div className="mb-2">{medalIcon}</div>
                       <div className="w-14 h-14 rounded border-2 border-white/10 p-1 mb-2.5 bg-black/30 flex items-center justify-center">
                         {user.avatar_url ? (
                           <img
@@ -352,7 +346,7 @@ export default async function Home() {
               </div>
               <h3 className="text-base font-black text-white mb-2 uppercase">Score Points</h3>
               <p className="text-sm text-[#9CA3B4] leading-relaxed">
-                Earn <strong className="text-[#F3A81D]">3 points</strong> for exact scoreline, <strong className="text-[#F3A81D]">1 point</strong> for correct outcome.
+                Earn <strong className="text-[#F3A81D]">3 points</strong> for exact score, <strong className="text-[#F3A81D]">1 point</strong> for correct result.
               </p>
             </div>
 
