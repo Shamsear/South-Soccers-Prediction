@@ -4,7 +4,8 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { KeyRound, Mail, User, ShieldAlert, Phone, UserCircle, Image as ImageIcon, Eye, EyeOff } from 'lucide-react'
+import { KeyRound, Mail, User, ShieldAlert, Phone, UserCircle, Image as ImageIcon, Eye, EyeOff, Globe } from 'lucide-react'
+import { SearchableSelect } from '@/components/searchable-select'
 
 export function RegisterForm() {
   const router = useRouter()
@@ -12,11 +13,31 @@ export function RegisterForm() {
   const [fullName, setFullName] = useState('')
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
+  const [countryCode, setCountryCode] = useState('+1')
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+
+  // Common country codes
+  const countryCodes = [
+    { code: '+1', name: 'US/Canada' },
+    { code: '+44', name: 'UK' },
+    { code: '+91', name: 'India' },
+    { code: '+86', name: 'China' },
+    { code: '+81', name: 'Japan' },
+    { code: '+49', name: 'Germany' },
+    { code: '+33', name: 'France' },
+    { code: '+39', name: 'Italy' },
+    { code: '+34', name: 'Spain' },
+    { code: '+61', name: 'Australia' },
+    { code: '+55', name: 'Brazil' },
+    { code: '+52', name: 'Mexico' },
+    { code: '+7', name: 'Russia' },
+    { code: '+27', name: 'South Africa' },
+    { code: '+82', name: 'South Korea' },
+  ]
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -123,13 +144,24 @@ export function RegisterForm() {
             })
 
             clearTimeout(uploadTimeout)
-            const uploadResult = await uploadResponse.json()
-
-            if (uploadResult.success) {
-              avatarUrl = uploadResult.url
-            } else {
-              uploadError = uploadResult.error || 'Upload failed'
+            
+            // Check if response is ok and is JSON
+            if (!uploadResponse.ok) {
+              uploadError = `Upload failed with status ${uploadResponse.status}`
               console.error('Avatar upload error:', uploadError)
+            } else {
+              try {
+                const uploadResult = await uploadResponse.json()
+                if (uploadResult.success) {
+                  avatarUrl = uploadResult.url
+                } else {
+                  uploadError = uploadResult.error || 'Upload failed'
+                  console.error('Avatar upload error:', uploadError)
+                }
+              } catch (parseError) {
+                uploadError = 'Invalid response from server'
+                console.error('Avatar upload parse error:', parseError)
+              }
             }
           } catch (error) {
             if (error instanceof Error) {
@@ -145,16 +177,20 @@ export function RegisterForm() {
           }
         }
 
+        // Continue with registration even if avatar upload fails
         // Prepare user metadata
         const userMetadata: Record<string, any> = {
           full_name: fullName.trim(),
           username: username.trim(),
-          phone_number: phone.trim() || null,
+          phone_number: phone.trim() ? `${countryCode}${phone.trim()}` : null,
         }
 
         // Only include avatar_url if upload succeeded
         if (avatarUrl) {
           userMetadata.avatar_url = avatarUrl
+        } else if (uploadError) {
+          // Log warning but continue
+          console.warn('Proceeding with registration without avatar:', uploadError)
         }
 
         // Register user with metadata
@@ -306,16 +342,30 @@ export function RegisterForm() {
               <Phone className="w-4 h-4 text-[#F3A81D]" />
               Phone Number (Optional)
             </label>
-            <input
-              id="phone"
-              type="tel"
-              placeholder="+1 (555) 123-4567"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              disabled={isPending}
-              autoComplete="tel"
-              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
-            />
+            <div className="flex gap-2">
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                disabled={isPending}
+                className="bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {countryCodes.map(country => (
+                  <option key={country.code} value={country.code} className="bg-[#0E0E13] text-white">
+                    {country.code} {country.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                id="phone"
+                type="tel"
+                placeholder="555-123-4567"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                disabled={isPending}
+                autoComplete="tel"
+                className="flex-1 bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
+              />
+            </div>
           </div>
 
           {/* Password */}
