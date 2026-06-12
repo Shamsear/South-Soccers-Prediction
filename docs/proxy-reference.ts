@@ -1,12 +1,17 @@
 /**
- * Next.js Proxy for Authentication and Authorization
+ * Next.js Proxy for Authentication and Authorization (DISABLED)
+ * 
+ * This file contains middleware code but is NOT active because:
+ * - File is named proxy.ts instead of middleware.ts
+ * - Exports are commented out to prevent accidental activation
+ * 
+ * To enable this middleware:
+ * 1. Rename this file from proxy.ts to middleware.ts
+ * 2. Uncomment the exports below
  * 
  * Requirements:
  * - 1 (Authentication required for protected routes)
  * - 11 (Admin dashboard access control)
- * 
- * Proxy runs on all routes and checks authentication status.
- * Redirects unauthenticated users to /login and non-admins away from /admin routes.
  */
 
 import { NextResponse } from 'next/server'
@@ -20,7 +25,8 @@ const PUBLIC_ROUTES = ['/', '/login', '/register', '/public-matches', '/public-l
 // Define admin routes that require admin role
 const ADMIN_ROUTES = ['/admin']
 
-export async function proxy(request: NextRequest) {
+// This function is NOT exported to prevent it from running as middleware
+async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Allow public routes without authentication check
@@ -93,11 +99,14 @@ export async function proxy(request: NextRequest) {
 }
 
 // Configure which routes the proxy should run on
-// NOTE: This file is named proxy.ts not middleware.ts, so it should NOT run
+// NOTE: This file is named proxy.ts not middleware.ts, so it should NOT run as middleware
 // If you want to enable this middleware, rename this file to middleware.ts
+// Commented out to prevent Vercel from treating this as middleware
+/*
 export const config = {
   matcher: [
     // API routes should NEVER be matched by middleware
     '/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
+*/

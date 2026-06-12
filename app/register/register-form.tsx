@@ -330,7 +330,21 @@ export function RegisterForm() {
         }
 
         // Continue with registration even if avatar upload fails
-        // Use admin API to bypass rate limits (temporary solution)
+        
+        // First, check if username already exists
+        const supabase = createClient()
+        const { data: existingUser } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('username', username.trim())
+          .single()
+        
+        if (existingUser) {
+          toast.error('This username is already taken. Please choose a different one.')
+          return
+        }
+        
+        // Use admin API to bypass rate limits (permanent solution)
         const result = await adminRegisterUser({
           username: username.trim(),
           password: password,
@@ -344,8 +358,7 @@ export function RegisterForm() {
           return
         }
 
-        // Success! Now log the user in
-        const supabase = createClient()
+        // Success! Now log the user in using the same supabase instance
         const dummyEmail = `${username.trim().toLowerCase()}@southsoccers.com`
         
         const { error: loginError } = await supabase.auth.signInWithPassword({

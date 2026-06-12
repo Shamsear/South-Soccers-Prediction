@@ -2,12 +2,17 @@
 
 import { useActionState, useState } from 'react'
 import { loginAction } from '@/app/actions/auth'
+import { lookupUsernameByPhone } from '@/app/actions/lookup-username'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
-import { KeyRound, User, LogIn, Eye, EyeOff } from 'lucide-react'
+import { KeyRound, User, LogIn, Eye, EyeOff, Phone, Search } from 'lucide-react'
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const [showUsernameLookup, setShowUsernameLookup] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [isLookingUp, setIsLookingUp] = useState(false)
+  
   const [state, formAction, isPending] = useActionState<
     { error?: string } | undefined,
     FormData
@@ -30,6 +35,33 @@ export function LoginForm() {
       toast.error(state.error)
     }
   }, [state])
+
+  const handleUsernameLookup = async () => {
+    if (!phoneNumber) {
+      toast.error('Please enter your phone number')
+      return
+    }
+
+    setIsLookingUp(true)
+    try {
+      const result = await lookupUsernameByPhone(phoneNumber)
+      
+      if (result.success && result.username) {
+        toast.success(`Your username is: ${result.username}`, {
+          duration: 10000,
+          description: result.fullName ? `Account name: ${result.fullName}` : undefined,
+        })
+        setShowUsernameLookup(false)
+        setPhoneNumber('')
+      } else {
+        toast.error(result.error || 'Username not found')
+      }
+    } catch (error) {
+      toast.error('Failed to look up username')
+    } finally {
+      setIsLookingUp(false)
+    }
+  }
 
   return (
     <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-8 shadow-2xl">
@@ -91,6 +123,51 @@ export function LoginForm() {
             </button>
           </div>
         </div>
+
+        {/* Forgot Username Link */}
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={() => setShowUsernameLookup(!showUsernameLookup)}
+            className="text-xs text-[#F3A81D] hover:text-[#FFD700] font-bold transition-colors"
+          >
+            {showUsernameLookup ? 'Back to Login' : 'Forgot Username? Find it using phone number'}
+          </button>
+        </div>
+
+        {/* Username Lookup Panel */}
+        {showUsernameLookup && (
+          <div className="bg-[#F3A81D]/5 border-2 border-[#F3A81D]/20 rounded-lg p-4">
+            <h3 className="text-sm font-black text-[#F3A81D] uppercase tracking-wider mb-3 flex items-center gap-2">
+              <Search className="w-4 h-4" />
+              Find Your Username
+            </h3>
+            <p className="text-xs text-[#8A92A6] mb-3">
+              Enter your phone number to retrieve your username
+            </p>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8A92A6]" />
+                <input
+                  type="tel"
+                  placeholder="+1234567890"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  disabled={isLookingUp}
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#050508]/60 border border-white/10 focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 rounded-lg text-sm font-bold text-white placeholder-[#8A92A6] focus:outline-none transition-all disabled:opacity-50"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleUsernameLookup}
+                disabled={isLookingUp || !phoneNumber}
+                className="px-4 py-2.5 bg-[#F3A81D] hover:bg-[#FFD700] text-black font-black text-xs uppercase tracking-wider rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLookingUp ? 'Searching...' : 'Find'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {state?.error && (
           <div className="bg-[#D80027]/10 border border-[#D80027]/30 rounded-lg p-3" role="alert">
