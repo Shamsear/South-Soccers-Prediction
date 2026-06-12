@@ -4,12 +4,22 @@
  * Handles image uploads to ImageKit CDN for avatar storage.
  */
 
-import ImageKit from '@imagekit/nodejs'
+import ImageKit from 'imagekit'
 
-// Initialize ImageKit instance
-const imagekit = new ImageKit({
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY || '',
-})
+// Initialize ImageKit instance with error handling
+let imagekit: ImageKit
+
+try {
+  imagekit = new ImageKit({
+    publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || '',
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY || '',
+    urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || '',
+  })
+  console.log('ImageKit initialized successfully')
+} catch (error) {
+  console.error('Failed to initialize ImageKit:', error)
+  throw error
+}
 
 /**
  * Upload image to ImageKit
@@ -24,26 +34,39 @@ export async function uploadToImageKit(
   folder: string = 'avatars'
 ) {
   try {
-    // Convert Buffer or base64 to data URI format expected by ImageKit
+    // Validate ImageKit configuration
+    if (!process.env.IMAGEKIT_PRIVATE_KEY || !process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || !process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT) {
+      console.error('ImageKit configuration missing')
+      return {
+        success: false,
+        error: 'ImageKit configuration missing',
+      }
+    }
+
+    // Convert Buffer or base64 to proper format expected by ImageKit
     let fileData: string
     
     if (Buffer.isBuffer(file)) {
-      // Convert Buffer to base64 string with data URI prefix
-      fileData = `data:image/jpeg;base64,${file.toString('base64')}`
+      // Convert Buffer to base64 string
+      fileData = file.toString('base64')
     } else if (file.startsWith('data:')) {
-      // Already a data URI
-      fileData = file
+      // Extract base64 from data URI
+      fileData = file.split(',')[1]
     } else {
-      // Assume it's a base64 string, add data URI prefix
-      fileData = `data:image/jpeg;base64,${file}`
+      // Already a base64 string
+      fileData = file
     }
 
-    const result = await imagekit.files.upload({
+    console.log('Uploading to ImageKit:', { fileName, folder })
+
+    const result = await imagekit.upload({
       file: fileData,
       fileName,
       folder,
       useUniqueFileName: true,
     })
+
+    console.log('ImageKit upload successful:', { url: result.url, fileId: result.fileId })
 
     return {
       success: true,
@@ -66,7 +89,7 @@ export async function uploadToImageKit(
  */
 export async function deleteFromImageKit(fileId: string) {
   try {
-    await imagekit.files.delete(fileId)
+    await imagekit.deleteFile(fileId)
     return { success: true }
   } catch (error) {
     console.error('ImageKit delete error:', error)

@@ -10,16 +10,9 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { Search, ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
 import { MatchFixtureCard } from '@/components/match-fixture-card'
+import type { Database } from '@/types/database'
 
-interface Match {
-  id: string
-  home_team: string
-  away_team: string
-  group_name: string | null
-  kickoff_time: string
-  competition_round: string
-  [key: string]: any
-}
+type Match = Database['public']['Tables']['matches']['Row']
 
 interface MatchesFilterProps {
   matches: Match[]
@@ -33,7 +26,8 @@ export function MatchesFilter({ matches }: MatchesFilterProps) {
   const dateScrollRef = useRef<HTMLDivElement>(null)
 
   // Extract unique groups
-  const groups = Array.from(new Set(matches.map(m => m.group_name).filter(Boolean))).sort()
+  const groups = Array.from(new Set(matches.map(m => m.group_name).filter(Boolean))) as string[]
+  groups.sort()
   
   // Extract unique dates (YYYY-MM-DD format)
   const dates = Array.from(

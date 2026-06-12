@@ -23,7 +23,7 @@ interface LeaderboardEntry {
 
 interface LeaderboardTableProps {
   leaderboard: LeaderboardEntry[]
-  currentUserId: string
+  currentUserId: string | null
 }
 
 export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTableProps) {
