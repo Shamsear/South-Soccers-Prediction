@@ -189,6 +189,89 @@ export async function GET(request: Request) {
 
       console.log(`Successfully synced ${parsedMatches.length} matches`)
 
+      // Auto-score any finished matches that haven't had winners announced
+      try {
+        const { data: unscoredMatches } = await serviceSupabase
+          .from('matches')
+          .select('id, home_score, away_score')
+          .eq('status', 'finished')
+          .or('winner_announced.is.null,winner_announced.eq.false')
+
+        if (unscoredMatches && unscoredMatches.length > 0) {
+          console.log(`Found ${unscoredMatches.length} finished matches to auto-score`)
+          
+          const { calculatePoints } = await import('@/lib/scoring')
+
+          for (const match of unscoredMatches) {
+            if (match.home_score === null || match.away_score === null) continue
+
+            // 1. Mark match as winner_announced
+            await serviceSupabase
+              .from('matches')
+              .update({ winner_announced: true })
+              .eq('id', match.id)
+
+            // 2. Score all predictions for this match
+            const { data: predictions } = await serviceSupabase
+              .from('predictions')
+              .select('id, user_id, predicted_home, predicted_away')
+              .eq('match_id', match.id)
+
+            if (predictions && predictions.length > 0) {
+              const nowIso = new Date().toISOString()
+              const userIds = new Set<string>()
+
+              // Save non-null scores for TS to understand inside the map callback
+              const homeScore = match.home_score
+              const awayScore = match.away_score
+
+              const updatePromises = predictions.map((pred: any) => {
+                userIds.add(pred.user_id)
+                const points = calculatePoints(
+                  pred.predicted_home,
+                  pred.predicted_away,
+                  homeScore,
+                  awayScore
+                )
+                return serviceSupabase
+                  .from('predictions')
+                  .update({ points_awarded: points, scored_at: nowIso })
+                  .eq('id', pred.id)
+              })
+              
+              await Promise.all(updatePromises)
+
+              // 3. Update user profiles for those users
+              for (const userId of Array.from(userIds)) {
+                const { data: userPreds } = await serviceSupabase
+                  .from('predictions')
+                  .select('points_awarded')
+                  .eq('user_id', userId)
+                  .not('points_awarded', 'is', null)
+
+                if (userPreds) {
+                  const typedUserPreds = userPreds as Array<{ points_awarded: number | null }>
+                  const totalPoints = typedUserPreds.reduce((sum, p) => sum + (p.points_awarded || 0), 0)
+                  const correctPredictions = typedUserPreds.filter(p => p.points_awarded === 3).length
+                  
+                  await serviceSupabase
+                    .from('profiles')
+                    .update({ total_points: totalPoints, correct_predictions: correctPredictions })
+                    .eq('id', userId)
+                }
+              }
+            }
+          }
+          
+          // 4. Refresh leaderboard
+          await serviceSupabase.rpc('refresh_leaderboard')
+          console.log('Auto-scoring complete and leaderboard refreshed')
+        }
+      } catch (scoringError) {
+        console.error('Error during auto-scoring:', scoringError)
+        // Don't fail the sync request if scoring fails
+      }
+
       // Return success response with metadata
       return NextResponse.json({
         success: true,
