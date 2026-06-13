@@ -36,16 +36,9 @@ const URGENT_MATCH_WINDOW_MS = 2 * 60 * 60 * 1000 // 2 hours
  */
 export async function GET(request: Request) {
   try {
-    // Check authentication using regular server client
+    // Check authentication using regular server client (optional for regular sync, required for force)
     const supabase = await createServerClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized. Please sign in.' },
-        { status: 401 }
-      )
-    }
+    const { data: { user } } = await supabase.auth.getUser()
 
     // Check for force parameter (admin only)
     const { searchParams } = new URL(request.url)
@@ -54,8 +47,15 @@ export async function GET(request: Request) {
     // Query last poll timestamp using service role (bypasses RLS)
     const serviceSupabase = createServiceRoleClient()
     
-    // If force sync, verify admin role
+    // If force sync, verify auth and admin role
     if (forceSync) {
+      if (!user) {
+        return NextResponse.json(
+          { error: 'Unauthorized. Force sync requires sign in.' },
+          { status: 401 }
+        )
+      }
+
       const { data: profile } = await serviceSupabase
         .from('profiles')
         .select('role')
