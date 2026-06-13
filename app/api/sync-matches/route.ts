@@ -16,7 +16,7 @@ import { fetchMatches, FootballApiError } from '@/lib/football-api'
 import { parseMatches } from '@/lib/parsers/match-parser'
 
 // Configuration
-const API_POLL_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
+const API_POLL_INTERVAL_MS = 60 * 1000 // 1 minute (reduced from 5 mins for faster live updates)
 const URGENT_MATCH_WINDOW_MS = 2 * 60 * 60 * 1000 // 2 hours
 
 /**
