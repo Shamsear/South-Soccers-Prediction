@@ -119,7 +119,7 @@ export function MatchWithPredictionsCard({
             
             {/* Away Team */}
             <div className="w-full sm:flex-1 flex items-center gap-3 sm:justify-end">
-              <span className="text-sm font-black text-white uppercase flex-1 break-words sm:text-right">{match.away_team}</span>
+              <span className="text-sm font-black text-white uppercase flex-1 break-words text-right">{match.away_team}</span>
               <TeamLogoBadge
                 src={match.away_team_logo}
                 alt={match.away_team}

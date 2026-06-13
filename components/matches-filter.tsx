@@ -84,19 +84,19 @@ export function MatchesFilter({ matches, linkPrefix = '/matches' }: MatchesFilte
   return (
     <div>
       {/* Search and Filters Bar */}
-      <div className="mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-6 md:mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4">
           
           {/* Search Input */}
           <div className="md:col-span-1">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#8A92A6]" />
+              <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-[#8A92A6]" />
               <input
                 type="text"
                 placeholder="Search teams or round..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-[#0E0E13] border border-white/10 focus:border-[#F3A81D] rounded-lg text-white placeholder-[#8A92A6] focus:outline-none transition-colors text-sm font-medium"
+                className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 bg-[#0E0E13] border border-white/10 focus:border-[#F3A81D] rounded-lg text-white placeholder-[#8A92A6] focus:outline-none transition-colors text-xs md:text-sm font-medium"
               />
             </div>
           </div>
@@ -104,11 +104,11 @@ export function MatchesFilter({ matches, linkPrefix = '/matches' }: MatchesFilte
           {/* Group Filter Dropdown */}
           <div className="md:col-span-1">
             <div className="relative">
-              <Users className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#8A92A6] pointer-events-none" />
+              <Users className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-[#8A92A6] pointer-events-none" />
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
-                className="w-full pl-12 pr-10 py-3 bg-[#0E0E13] border border-white/10 focus:border-[#F3A81D] rounded-lg text-white focus:outline-none transition-colors text-sm font-bold uppercase tracking-wide appearance-none cursor-pointer"
+                className="w-full pl-9 md:pl-12 pr-8 md:pr-10 py-2 md:py-3 bg-[#0E0E13] border border-white/10 focus:border-[#F3A81D] rounded-lg text-white focus:outline-none transition-colors text-xs md:text-sm font-bold uppercase tracking-wide appearance-none cursor-pointer"
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238A92A6' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                   backgroundRepeat: 'no-repeat',
@@ -129,11 +129,11 @@ export function MatchesFilter({ matches, linkPrefix = '/matches' }: MatchesFilte
           {/* Date Filter Dropdown */}
           <div className="md:col-span-1">
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#8A92A6] pointer-events-none" />
+              <Calendar className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-[#8A92A6] pointer-events-none" />
               <select
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full pl-12 pr-10 py-3 bg-[#0E0E13] border border-white/10 focus:border-[#0052B4] rounded-lg text-white focus:outline-none transition-colors text-sm font-bold uppercase tracking-wide appearance-none cursor-pointer"
+                className="w-full pl-9 md:pl-12 pr-8 md:pr-10 py-2 md:py-3 bg-[#0E0E13] border border-white/10 focus:border-[#0052B4] rounded-lg text-white focus:outline-none transition-colors text-xs md:text-sm font-bold uppercase tracking-wide appearance-none cursor-pointer"
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238A92A6' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                   backgroundRepeat: 'no-repeat',

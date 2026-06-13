@@ -130,15 +130,21 @@ export async function fetchMatches(
   const url = `${FOOTBALL_API_BASE}/competitions/WC/matches?season=${season}`
 
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+    
     const response = await fetch(url, {
       headers: {
         'X-Auth-Token': apiKey,
       },
+      signal: controller.signal,
       // Add timeout and caching options
       next: {
         revalidate: 0, // Don't cache - we handle caching in sync logic
       },
     })
+    
+    clearTimeout(timeoutId)
 
     // Handle HTTP errors
     if (!response.ok) {
@@ -195,6 +201,25 @@ export async function fetchMatches(
     return data
 
   } catch (error) {
+    // Handle abort/timeout errors
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new FootballApiError(
+        'Request timeout: The external API took too long to respond.',
+        408,
+        'Timeout after 10 seconds'
+      )
+    }
+    
+    // Handle network errors (connection closed, DNS failures, etc.)
+    if (error instanceof TypeError && error.message.includes('fetch failed')) {
+      console.error('Network error when fetching matches:', error)
+      throw new FootballApiError(
+        'Network error: Unable to connect to the external API. Please check your internet connection.',
+        0,
+        error.message
+      )
+    }
+    
     // If it's already a FootballApiError, check if we should retry
     if (error instanceof FootballApiError) {
       // Don't retry on authentication errors (401) or rate limit errors (429)

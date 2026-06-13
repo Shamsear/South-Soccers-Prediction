@@ -45,10 +45,17 @@ export function BulkPredictButton({ matches }: BulkPredictButtonProps) {
       {/* Mobile button */}
       <button
         onClick={() => setShowModal(true)}
-        className="md:hidden w-10 h-10 bg-gradient-to-br from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg border border-white/10 transition-all"
+        className="md:hidden relative px-3 h-8 bg-gradient-to-br from-[#F3A81D] via-[#FF8C00] to-[#D80027] hover:scale-105 text-white rounded-lg flex items-center justify-center gap-1.5 border border-white/10 transition-all group text-xs font-black uppercase"
         aria-label="Bulk Predict"
+        title="Bulk Predict"
       >
-        <Zap className="w-5 h-5" />
+        <Zap className="w-3.5 h-3.5 fill-current" />
+        <span>Bulk</span>
+        {unpredictedCount > 0 && (
+          <span className="ml-1 bg-white/20 px-1.5 py-0.5 rounded-full text-[10px] font-black">
+            {unpredictedCount}
+          </span>
+        )}
       </button>
 
       {showModal && (

@@ -122,17 +122,17 @@ export default async function MatchesPage() {
       <div className="container mx-auto px-4 py-12 max-w-7xl relative z-10">
         
         {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between gap-3 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D80027] to-[#8B0A1E] flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-white" />
+        <div className="mb-6 md:mb-12">
+          <div className="flex items-center justify-between gap-3 mb-3 md:mb-4">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-[#D80027] to-[#8B0A1E] flex items-center justify-center">
+                <Trophy className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F3A81D] to-white uppercase tracking-tight">
+                <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F3A81D] to-white uppercase tracking-tight">
                   Tournament Fixtures
                 </h1>
-                <p className="text-[#C1C5D0] text-sm mt-1">
+                <p className="text-[#C1C5D0] text-xs md:text-sm mt-0.5 md:mt-1 hidden sm:block">
                   {totalMatches} total matches • Lock in predictions before kickoff
                 </p>
               </div>
@@ -144,45 +144,45 @@ export default async function MatchesPage() {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
-            <div className="flex items-center gap-2 mb-1">
-              <Calendar className="w-4 h-4 text-[#F3A81D]" />
-              <p className="text-[10px] font-black text-[#8A92A6] uppercase">Total</p>
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mb-6 md:mb-8">
+          <div className="bg-[#0E0E13] border border-white/5 p-2 md:p-4 rounded-lg md:rounded-xl">
+            <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
+              <Calendar className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
+              <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase">Total</p>
             </div>
-            <p className="text-2xl font-black text-white">{totalMatches}</p>
+            <p className="text-lg md:text-2xl font-black text-white">{totalMatches}</p>
           </div>
 
-          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
-            <div className="flex items-center gap-2 mb-1">
-              <Calendar className="w-4 h-4 text-[#0052B4]" />
-              <p className="text-[10px] font-black text-[#8A92A6] uppercase">Upcoming</p>
+          <div className="bg-[#0E0E13] border border-white/5 p-2 md:p-4 rounded-lg md:rounded-xl">
+            <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
+              <Calendar className="w-3 h-3 md:w-4 md:h-4 text-[#0052B4]" />
+              <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase">Upcoming</p>
             </div>
-            <p className="text-2xl font-black text-white">{upcomingMatches}</p>
+            <p className="text-lg md:text-2xl font-black text-white">{upcomingMatches}</p>
           </div>
 
-          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 rounded-full bg-[#D80027] animate-pulse" />
-              <p className="text-[10px] font-black text-[#8A92A6] uppercase">Live</p>
+          <div className="bg-[#0E0E13] border border-white/5 p-2 md:p-4 rounded-lg md:rounded-xl">
+            <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#D80027] animate-pulse" />
+              <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase">Live</p>
             </div>
-            <p className="text-2xl font-black text-white">{liveMatchesCount}</p>
+            <p className="text-lg md:text-2xl font-black text-white">{liveMatchesCount}</p>
           </div>
 
-          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
-            <div className="flex items-center gap-2 mb-1">
-              <Calendar className="w-4 h-4 text-[#009A44]" />
-              <p className="text-[10px] font-black text-[#8A92A6] uppercase">Finished</p>
+          <div className="bg-[#0E0E13] border border-white/5 p-2 md:p-4 rounded-lg md:rounded-xl">
+            <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
+              <Calendar className="w-3 h-3 md:w-4 md:h-4 text-[#009A44]" />
+              <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase">Finished</p>
             </div>
-            <p className="text-2xl font-black text-white">{finishedMatches}</p>
+            <p className="text-lg md:text-2xl font-black text-white">{finishedMatches}</p>
           </div>
 
-          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
-            <div className="flex items-center gap-2 mb-1">
-              <Target className="w-4 h-4 text-[#F3A81D]" />
-              <p className="text-[10px] font-black text-[#8A92A6] uppercase">Your Predicts</p>
+          <div className="bg-[#0E0E13] border border-white/5 p-2 md:p-4 rounded-lg md:rounded-xl">
+            <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
+              <Target className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
+              <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase">Yours</p>
             </div>
-            <p className="text-2xl font-black text-white">{userPredictionsCount}</p>
+            <p className="text-lg md:text-2xl font-black text-white">{userPredictionsCount}</p>
           </div>
         </div>
         

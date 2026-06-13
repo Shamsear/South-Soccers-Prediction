@@ -75,8 +75,7 @@ export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = t
       {/* Match Details Bar */}
       <div className="match-fixture-content">
         {/* Home Team */}
-        <div className="match-fixture-team">
-          <span className="match-fixture-team-name">{match.home_team}</span>
+        <div className="match-fixture-team match-fixture-team-home">
           <TeamLogoBadge
             src={match.home_team_logo}
             alt={match.home_team}
@@ -84,6 +83,7 @@ export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = t
             size="lg"
             className="match-fixture-flag"
           />
+          <span className="match-fixture-team-name">{match.home_team}</span>
         </div>
         
         {/* Score or VS */}
@@ -108,7 +108,8 @@ export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = t
         </div>
         
         {/* Away Team */}
-        <div className="match-fixture-team">
+        <div className="match-fixture-team match-fixture-team-away">
+          <span className="match-fixture-team-name match-fixture-team-name-away">{match.away_team}</span>
           <TeamLogoBadge
             src={match.away_team_logo}
             alt={match.away_team}
@@ -116,7 +117,6 @@ export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = t
             size="lg"
             className="match-fixture-flag"
           />
-          <span className="match-fixture-team-name">{match.away_team}</span>
         </div>
       </div>
     </div>

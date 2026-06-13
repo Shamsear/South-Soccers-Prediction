@@ -440,6 +440,12 @@
     font-size: 0.875rem;
   }
 
+  @media (max-width: 768px) {
+    .match-fixture-header {
+      @apply px-3 py-1.5 text-xs;
+    }
+  }
+
   .match-fixture-content {
     @apply flex items-center justify-between px-8 py-6;
     background: #000000;
@@ -450,12 +456,12 @@
     min-width: 0;
   }
 
-  .match-fixture-team:first-child {
-    @apply justify-end;
+  .match-fixture-team-home {
+    @apply justify-start;
   }
 
-  .match-fixture-team:last-child {
-    @apply justify-start;
+  .match-fixture-team-away {
+    @apply justify-end;
   }
 
   .match-fixture-team-name {
@@ -463,6 +469,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  
+  .match-fixture-team-name-away {
+    @apply text-right;
   }
 
   .match-fixture-flag {
@@ -504,21 +514,24 @@
 
     .match-fixture-team {
       @apply gap-3 flex-row w-full;
-      justify-content: flex-start !important;
     }
     
-    .match-fixture-team:first-child {
+    .match-fixture-team-home {
       @apply justify-start;
     }
 
-    .match-fixture-team:last-child {
-      @apply justify-start;
+    .match-fixture-team-away {
+      @apply justify-end;
     }
 
     .match-fixture-team-name {
       @apply text-sm;
       white-space: normal;
       word-break: break-word;
+    }
+    
+    .match-fixture-team-name-away {
+      @apply text-right;
     }
 
     .match-fixture-flag {
