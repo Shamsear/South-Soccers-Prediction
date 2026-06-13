@@ -92,20 +92,20 @@ export function MatchWithPredictionsCard({
         
         {/* Match Details */}
         <div className="px-4 py-4">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-3 sm:gap-4">
             {/* Home Team */}
-            <div className="flex-1 flex items-center gap-3">
+            <div className="w-full sm:flex-1 flex items-center gap-3">
               <TeamLogoBadge
                 src={match.home_team_logo}
                 alt={match.home_team}
                 teamName={match.home_team}
                 size="md"
               />
-              <span className="text-sm font-black text-white uppercase truncate">{match.home_team}</span>
+              <span className="text-sm font-black text-white uppercase flex-1 break-words">{match.home_team}</span>
             </div>
             
             {/* Score or VS */}
-            <div className="flex items-center gap-2 px-3">
+            <div className="flex items-center gap-2 sm:px-3 flex-shrink-0">
               {hasScore ? (
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-black text-[#F3A81D]">{match.home_score ?? 0}</span>
@@ -118,8 +118,8 @@ export function MatchWithPredictionsCard({
             </div>
             
             {/* Away Team */}
-            <div className="flex-1 flex items-center gap-3 justify-end">
-              <span className="text-sm font-black text-white uppercase truncate text-right">{match.away_team}</span>
+            <div className="w-full sm:flex-1 flex items-center gap-3 sm:justify-end">
+              <span className="text-sm font-black text-white uppercase flex-1 break-words sm:text-right">{match.away_team}</span>
               <TeamLogoBadge
                 src={match.away_team_logo}
                 alt={match.away_team}

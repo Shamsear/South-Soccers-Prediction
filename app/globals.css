@@ -499,30 +499,41 @@
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .match-fixture-content {
-      @apply px-4 py-4;
+      @apply flex-col gap-4 px-4 py-5;
     }
 
     .match-fixture-team {
-      @apply gap-2;
+      @apply gap-3 flex-row w-full;
+      justify-content: flex-start !important;
+    }
+    
+    .match-fixture-team:first-child {
+      @apply justify-start;
+    }
+
+    .match-fixture-team:last-child {
+      @apply justify-start;
     }
 
     .match-fixture-team-name {
       @apply text-sm;
+      white-space: normal;
+      word-break: break-word;
     }
 
     .match-fixture-flag {
-      width: 36px;
-      height: 24px;
+      width: 40px;
+      height: 28px;
     }
 
     .match-fixture-score {
-      @apply gap-2 px-3;
+      @apply gap-3 px-0 w-full justify-center;
     }
 
     .match-fixture-score-box {
-      @apply text-lg;
-      width: 44px;
-      height: 44px;
+      @apply text-xl;
+      width: 48px;
+      height: 48px;
     }
   }
 

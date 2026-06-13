@@ -31,7 +31,7 @@ export function BulkPredictButton({ matches }: BulkPredictButtonProps) {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="hidden md:flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white font-black text-sm uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-[#F3A81D]/30 hover:shadow-xl hover:shadow-[#F3A81D]/50"
+        className="hidden md:flex items-center gap-2 px-5 py-3 bg-gradient-to-br from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white font-black text-sm uppercase tracking-wider rounded-lg transition-all shadow-md hover:shadow-lg border border-white/10"
       >
         <Zap className="w-4 h-4" />
         Bulk Predict
@@ -45,7 +45,8 @@ export function BulkPredictButton({ matches }: BulkPredictButtonProps) {
       {/* Mobile button */}
       <button
         onClick={() => setShowModal(true)}
-        className="md:hidden w-10 h-10 bg-gradient-to-r from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white rounded-lg flex items-center justify-center shadow-lg shadow-[#F3A81D]/30"
+        className="md:hidden w-10 h-10 bg-gradient-to-br from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white rounded-lg flex items-center justify-center shadow-md hover:shadow-lg border border-white/10 transition-all"
+        aria-label="Bulk Predict"
       >
         <Zap className="w-5 h-5" />
       </button>

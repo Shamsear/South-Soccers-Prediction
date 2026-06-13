@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { submitBulkPredictions } from '@/app/actions/bulk-predictions'
 import { toast } from 'sonner'
-import { X, CheckCircle, AlertCircle, Zap, Plus, Minus } from 'lucide-react'
+import { X, CheckCircle, AlertCircle, Zap, Plus, Minus, Search } from 'lucide-react'
 import type { Database } from '@/types/database'
 
 type Match = Database['public']['Tables']['matches']['Row']
@@ -24,9 +24,16 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
   const [isPending, startTransition] = useTransition()
   const [selectedMatches, setSelectedMatches] = useState<Set<string>>(new Set())
   const [predictions, setPredictions] = useState<Map<string, PredictionEntry>>(new Map())
+  const [searchTerm, setSearchTerm] = useState('')
 
   // Filter only upcoming matches (not started yet)
   const upcomingMatches = matches.filter(m => m.status === 'upcoming')
+  
+  // Filter by search term
+  const filteredMatches = upcomingMatches.filter(m =>
+    m.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    m.away_team.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const toggleMatchSelection = (match: Match) => {
     const newSelected = new Set(selectedMatches)
@@ -119,7 +126,7 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div className="bg-[#0E0E13] border border-white/10 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
         
         {/* Header */}
@@ -131,7 +138,7 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
             <div>
               <h2 className="text-2xl font-black text-white uppercase tracking-tight">Bulk Predict</h2>
               <p className="text-xs text-[#8A92A6] mt-0.5">
-                Select matches and enter predictions
+                Select matches and enter predictions ({filteredMatches.length} matches)
               </p>
             </div>
           </div>
@@ -144,16 +151,32 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
           </button>
         </div>
 
+        {/* Search Bar */}
+        <div className="px-6 pt-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8A92A6] pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search teams..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 bg-black/40 border border-white/10 focus:border-[#F3A81D] rounded-lg text-white placeholder-[#8A92A6] focus:outline-none transition-colors text-sm font-medium"
+            />
+          </div>
+        </div>
+
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
-          {upcomingMatches.length === 0 ? (
+          {filteredMatches.length === 0 ? (
             <div className="text-center py-12">
               <AlertCircle className="w-12 h-12 text-[#8A92A6] mx-auto mb-3" />
-              <p className="text-[#8A92A6] font-bold">No upcoming matches available for prediction</p>
+              <p className="text-[#8A92A6] font-bold">
+                {searchTerm ? 'No matches found' : 'No upcoming matches available for prediction'}
+              </p>
             </div>
           ) : (
             <div className="space-y-3">
-              {upcomingMatches.map((match) => {
+              {filteredMatches.map((match) => {
                 const isSelected = selectedMatches.has(match.id)
                 const prediction = predictions.get(match.id)
                 const kickoffDate = new Date(match.kickoff_time)
