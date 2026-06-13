@@ -31,14 +31,21 @@ export async function middleware(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null;
 
-  // Refresh session if user is logged in
-  // This keeps the session alive and prevents automatic logout
-  if (user) {
-    await supabase.auth.refreshSession()
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user;
+
+    // Refresh session if user is logged in
+    // This keeps the session alive and prevents automatic logout
+    if (user) {
+      await supabase.auth.refreshSession()
+    }
+  } catch (error) {
+    // Edge runtime fetch errors to Supabase shouldn't crash the entire app.
+    // Instead, log the error and allow the request to proceed as an unauthenticated request.
+    console.warn('Middleware: Supabase auth fetch failed. Proceeding as guest.', error instanceof Error ? error.message : error)
   }
 
   return supabaseResponse

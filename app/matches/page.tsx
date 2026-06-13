@@ -52,9 +52,7 @@ export default async function MatchesPage() {
     )
   }
 
-  // Trigger sync check (fire and forget)
-  fetch(new URL('/api/sync-matches', process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:3000').href)
-    .catch(err => console.error('Background sync failed:', err))
+  // Client-side AutoSyncMatches component handles background syncing
 
   // Fetch matches
   const { data: matches, error: matchesError } = await supabase
