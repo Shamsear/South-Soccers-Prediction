@@ -41,7 +41,7 @@ type Match = {
  */
 function formatDate(isoString: string): string {
   const date = new Date(isoString)
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',

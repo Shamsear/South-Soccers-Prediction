@@ -68,7 +68,7 @@ function formatMatchDate(isoString: string): string {
     hour: '2-digit',
     minute: '2-digit',
   }
-  return date.toLocaleString('en-US', options)
+  return date.toLocaleString(undefined, options) // undefined = use browser's locale and timezone
 }
 
 function getHostCountryClass(venue: string | null): string {

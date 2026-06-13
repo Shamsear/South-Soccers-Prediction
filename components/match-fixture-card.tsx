@@ -22,6 +22,7 @@ interface MatchFixtureCardProps {
 
 /**
  * Format date and time for fixture display
+ * Uses user's locale and timezone automatically
  */
 function formatFixtureDateTime(isoString: string): { date: string; time: string; venue: string } {
   const date = new Date(isoString)
@@ -39,8 +40,8 @@ function formatFixtureDateTime(isoString: string): { date: string; time: string;
   }
   
   return {
-    date: date.toLocaleString('en-US', dateOptions),
-    time: date.toLocaleString('en-US', timeOptions),
+    date: date.toLocaleString(undefined, dateOptions), // undefined = use browser's locale
+    time: date.toLocaleString(undefined, timeOptions), // undefined = use browser's locale
     venue: '', // We'll use match.venue separately
   }
 }

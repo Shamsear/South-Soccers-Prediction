@@ -72,13 +72,13 @@ export function MatchesFilter({ matches, linkPrefix = '/matches' }: MatchesFilte
   // Format date for display
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr + 'T00:00:00')
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
   }
 
   // Format date for short display
   const formatDateShort = (dateStr: string) => {
     const date = new Date(dateStr + 'T00:00:00')
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
   }
 
   return (

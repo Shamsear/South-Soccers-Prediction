@@ -47,7 +47,7 @@ export function ImportPredictionsForm({ users, matches }: ImportPredictionsFormP
 
   // Transform matches into options
   const matchOptions = matches.map(match => {
-    const date = new Date(match.kickoff_time).toLocaleDateString('en-US', {
+    const date = new Date(match.kickoff_time).toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
