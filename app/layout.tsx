@@ -34,40 +34,33 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${inter.variable}`}
+      className={`${outfit.variable} ${inter.variable} dark`}
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col bg-[#050509] text-white antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          {/* Header Stack - LiveMatchBanner + Navigation */}
-          <div className="sticky top-0 z-50 flex flex-col w-full">
-            <LiveMatchBanner />
-            <Navigation />
+        {/* Header Stack - LiveMatchBanner + Navigation */}
+        <div className="sticky top-0 z-50 flex flex-col w-full">
+          <LiveMatchBanner />
+          <Navigation />
+        </div>
+
+        {/* Main Content Area */}
+        <main className="flex-1 w-full pb-24 md:pb-8">
+          {children}
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-white/5 bg-gradient-to-b from-[#0A0A0F] to-[#050508] py-16 mt-auto relative overflow-hidden">
+          {/* Decorative Background */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#F3A81D] to-transparent" />
+            <div className="absolute inset-0 bg-cyber-pitch opacity-20" />
           </div>
 
-          {/* Main Content Area */}
-          <main className="flex-1 w-full pb-24 md:pb-8">
-            {children}
-          </main>
+          <FooterContent />
+        </footer>
 
-          {/* Footer */}
-          <footer className="border-t border-white/5 bg-gradient-to-b from-[#0A0A0F] to-[#050508] py-16 mt-auto relative overflow-hidden">
-            {/* Decorative Background */}
-            <div className="absolute inset-0 opacity-5">
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#F3A81D] to-transparent" />
-              <div className="absolute inset-0 bg-cyber-pitch opacity-20" />
-            </div>
-
-            <FooterContent />
-          </footer>
-
-          <Toaster position="bottom-right" richColors />
-        </ThemeProvider>
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );
