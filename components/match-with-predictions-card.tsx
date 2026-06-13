@@ -261,10 +261,8 @@ export function MatchWithPredictionsCard({
                       {match.status === 'finished' && (
                         pred.points_awarded !== null ? (
                           <div className={`px-1.5 py-0.5 md:px-2 md:py-1 rounded-lg border text-center min-w-[40px] md:min-w-[50px] ${
-                            pred.points_awarded === 3
+                            pred.points_awarded > 0
                               ? 'bg-emerald-950/50 border-emerald-500/35 text-emerald-400'
-                              : pred.points_awarded === 1
-                              ? 'bg-amber-950/50 border-amber-500/35 text-amber-400'
                               : 'bg-rose-950/50 border-rose-500/35 text-rose-400'
                           }`}>
                             <p className="text-[10px] md:text-xs font-black">

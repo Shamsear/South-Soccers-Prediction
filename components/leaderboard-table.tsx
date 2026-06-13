@@ -187,10 +187,8 @@ export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTabl
                             </p>
                             {pred.matches.status === 'finished' && pred.points_awarded !== null && (
                               <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
-                                pred.points_awarded === 3
+                                pred.points_awarded > 0
                                   ? 'bg-emerald-950/50 text-emerald-400'
-                                  : pred.points_awarded === 1
-                                  ? 'bg-amber-950/50 text-amber-400'
                                   : 'bg-rose-950/50 text-rose-400'
                               }`}>
                                 {pred.points_awarded === 0 ? '0' : `+${pred.points_awarded}`}
@@ -364,10 +362,8 @@ export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTabl
                                   </p>
                                   {pred.matches.status === 'finished' && pred.points_awarded !== null && (
                                     <span className={`ml-2 px-2 py-1 rounded text-xs font-black flex-shrink-0 ${
-                                      pred.points_awarded === 3
+                                      pred.points_awarded > 0
                                         ? 'bg-emerald-950/50 text-emerald-400'
-                                        : pred.points_awarded === 1
-                                        ? 'bg-amber-950/50 text-amber-400'
                                         : 'bg-rose-950/50 text-rose-400'
                                     }`}>
                                       {pred.points_awarded === 0 ? '0' : `+${pred.points_awarded}`}

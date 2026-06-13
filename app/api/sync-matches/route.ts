@@ -89,7 +89,8 @@ export async function GET(request: Request) {
       : null
 
     // Process any stuck unscored matches right away, before cached returns
-    await processUnscoredMatches(serviceSupabase)
+    // If forceSync is true, it will recalculate ALL finished matches
+    await processUnscoredMatches(serviceSupabase, forceSync)
 
     // Check if we should skip sync due to rate limiting (< 5 minutes)
     // Skip this check if force sync is enabled
@@ -192,8 +193,9 @@ export async function GET(request: Request) {
 
       console.log(`Successfully synced ${parsedMatches.length} matches`)
 
-      // Check for any unscored finished matches before potentially returning early
-      await processUnscoredMatches(serviceSupabase)
+      // Check for any unscored matches before potentially returning early
+      // If forceSync is true, it will recalculate ALL finished matches
+      await processUnscoredMatches(serviceSupabase, forceSync)
 
       // Return success response with metadata
       return NextResponse.json({
@@ -270,17 +272,24 @@ export async function GET(request: Request) {
 
 /**
  * Helper function to score any finished matches that haven't been scored yet.
+ * If forceRescoreAll is true, it will recalculate points for ALL finished matches.
  */
-async function processUnscoredMatches(serviceSupabase: any) {
+async function processUnscoredMatches(serviceSupabase: any, forceRescoreAll: boolean = false) {
   try {
-    const { data: unscoredMatches } = await serviceSupabase
+    let query = serviceSupabase
       .from('matches')
       .select('id, home_score, away_score')
       .eq('status', 'finished')
-      .or('winner_announced.is.null,winner_announced.eq.false')
+
+    // If not forcing rescore, only select matches that haven't been announced
+    if (!forceRescoreAll) {
+      query = query.or('winner_announced.is.null,winner_announced.eq.false')
+    }
+
+    const { data: unscoredMatches } = await query
 
     if (unscoredMatches && unscoredMatches.length > 0) {
-      console.log(`Found ${unscoredMatches.length} finished matches to auto-score`)
+      console.log(`Found ${unscoredMatches.length} finished matches to auto-score (forced: ${forceRescoreAll})`)
       
       const { calculatePoints } = await import('@/lib/scoring')
 

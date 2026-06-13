@@ -128,8 +128,8 @@ export default async function PlayerDetailPage({
 
   // Calculate stats
   const totalPredictions = completedPredictions.length
-  const exactPredictions = completedPredictions.filter(p => p.points_awarded === 3).length
-  const correctOutcome = completedPredictions.filter(p => p.points_awarded === 1).length
+  const exactPredictions = completedPredictions.filter(p => p.points_awarded !== null && p.points_awarded >= 5).length
+  const correctOutcome = completedPredictions.filter(p => p.points_awarded !== null && p.points_awarded >= 1 && p.points_awarded < 5).length
   const wrongPredictions = completedPredictions.filter(p => p.points_awarded === 0).length
   const accuracy = totalPredictions > 0 
     ? Math.round(((exactPredictions + correctOutcome) / totalPredictions) * 100)
@@ -252,8 +252,8 @@ export default async function PlayerDetailPage({
           ) : (
             <div className="space-y-4">
               {completedPredictions.map(prediction => {
-                const isExact = prediction.points_awarded === 3
-                const isCorrectOutcome = prediction.points_awarded === 1
+                const isExact = prediction.points_awarded !== null && prediction.points_awarded >= 5
+                const isCorrectOutcome = prediction.points_awarded !== null && prediction.points_awarded >= 1 && prediction.points_awarded < 5
                 const isWrong = prediction.points_awarded === 0
 
                 let statusColor = 'text-[#8A92A6]'
@@ -267,10 +267,10 @@ export default async function PlayerDetailPage({
                   statusBorder = 'border-emerald-500/35'
                   statusIcon = <CheckCircle className="w-4 h-4" />
                 } else if (isCorrectOutcome) {
-                  statusColor = 'text-amber-400'
-                  statusBg = 'bg-amber-950/50'
-                  statusBorder = 'border-amber-500/35'
-                  statusIcon = <MinusCircle className="w-4 h-4" />
+                  statusColor = 'text-emerald-400'
+                  statusBg = 'bg-emerald-950/50'
+                  statusBorder = 'border-emerald-500/35'
+                  statusIcon = <CheckCircle className="w-4 h-4" />
                 } else if (isWrong) {
                   statusColor = 'text-rose-400'
                   statusBg = 'bg-rose-950/50'

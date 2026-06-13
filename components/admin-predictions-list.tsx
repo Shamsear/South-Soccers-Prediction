@@ -117,10 +117,8 @@ export function AdminPredictionsList({ predictions }: AdminPredictionsListProps)
                 {/* Points */}
                 {pred.points_awarded !== null && (
                   <div className={`px-3 py-2 rounded-lg border text-center min-w-[70px] ${
-                    pred.points_awarded === 3
+                    pred.points_awarded > 0
                       ? 'bg-emerald-950/50 border-emerald-500/35 text-emerald-400'
-                      : pred.points_awarded === 1
-                      ? 'bg-amber-950/50 border-amber-500/35 text-amber-400'
                       : 'bg-rose-950/50 border-rose-500/35 text-rose-400'
                   }`}>
                     <p className="text-xs font-bold uppercase mb-0.5">Points</p>

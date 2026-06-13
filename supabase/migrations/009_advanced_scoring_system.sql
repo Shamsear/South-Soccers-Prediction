@@ -176,8 +176,8 @@ BEGIN
     v_base_points := 3;
     v_notes := 'Correct winner/result! ';
     
-    -- RULE 3: Goal difference bonus (+1 point)
-    IF v_predicted_diff = v_actual_diff THEN
+    -- RULE 3: Goal difference bonus (+1 point) - Excluding draws since margin is always 0
+    IF v_predicted_diff = v_actual_diff AND v_actual_result != 'draw' THEN
       v_goal_diff_bonus := 1;
       v_notes := v_notes || 'Correct goal difference! ';
     END IF;
@@ -274,6 +274,9 @@ BEGIN
     points_breakdown = v_points_calc,
     scored_at = NOW()
   WHERE id = p_prediction_id;
+  
+  -- DELETE existing audit records for this prediction to prevent duplicates
+  DELETE FROM public.prediction_audit WHERE prediction_id = p_prediction_id;
   
   -- Create audit record
   INSERT INTO public.prediction_audit (
