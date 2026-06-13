@@ -24,6 +24,21 @@ type LeaderboardEntry = {
   total_points: number
   correct_predictions: number
   scored_count: number
+  predictions: Array<{
+    id: string
+    match_id: string
+    predicted_home: number
+    predicted_away: number
+    points_awarded: number | null
+    created_at: string
+    matches: {
+      home_team: string
+      away_team: string
+      home_score: number | null
+      away_score: number | null
+      status: string
+    }
+  }>
 }
 
 export default async function PublicLeaderboardPage() {
@@ -39,7 +54,39 @@ export default async function PublicLeaderboardPage() {
     console.error('Error fetching leaderboard:', leaderboardError)
   }
 
-  const typedLeaderboard = (leaderboard as LeaderboardEntry[]) || []
+  // Fetch predictions for each user
+  const leaderboardWithPredictions: LeaderboardEntry[] = []
+  
+  if (leaderboard && leaderboard.length > 0) {
+    for (const entry of leaderboard) {
+      const { data: predictions } = await supabase
+        .from('predictions')
+        .select(`
+          id,
+          match_id,
+          predicted_home,
+          predicted_away,
+          points_awarded,
+          created_at,
+          matches (
+            home_team,
+            away_team,
+            home_score,
+            away_score,
+            status
+          )
+        `)
+        .eq('user_id', entry.id)
+        .order('created_at', { ascending: false })
+
+      leaderboardWithPredictions.push({
+        ...entry,
+        predictions: predictions || []
+      } as LeaderboardEntry)
+    }
+  }
+
+  const typedLeaderboard = leaderboardWithPredictions
 
   // Calculate stats
   const totalPlayers = typedLeaderboard.length
