@@ -17,6 +17,7 @@ interface MatchFixtureCardProps {
   match: Match
   showGroupBadge?: boolean
   isClickable?: boolean
+  linkPrefix?: '/matches' | '/public-matches'
 }
 
 /**
@@ -44,7 +45,7 @@ function formatFixtureDateTime(isoString: string): { date: string; time: string;
   }
 }
 
-export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = true }: MatchFixtureCardProps) {
+export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = true, linkPrefix = '/matches' }: MatchFixtureCardProps) {
   const { date, time } = formatFixtureDateTime(match.kickoff_time)
   const hasScore = match.status === 'finished' || match.status === 'live'
   const formattedGroupName = formatGroupName(match.group_name)
@@ -123,7 +124,7 @@ export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = t
   
   if (isClickable) {
     return (
-      <Link href={`/matches/${match.id}`} className="block">
+      <Link href={`${linkPrefix}/${match.id}`} className="block">
         {CardContent}
       </Link>
     )

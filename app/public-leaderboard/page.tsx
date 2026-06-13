@@ -6,7 +6,7 @@
 
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { createServerClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import { LeaderboardTable } from '@/components/leaderboard-table'
 import { Trophy, Award, Target, TrendingUp, Users } from 'lucide-react'
 
@@ -27,7 +27,7 @@ type LeaderboardEntry = {
 }
 
 export default async function PublicLeaderboardPage() {
-  const supabase = await createServerClient()
+  const supabase = createPublicClient()
 
   // Query full leaderboard
   const { data: leaderboard, error: leaderboardError } = await supabase

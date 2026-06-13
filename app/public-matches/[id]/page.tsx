@@ -8,14 +8,21 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createServerClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import { CountdownTimer } from '@/components/countdown-timer'
 import { TeamLogoBadge } from '@/components/team-logo-badge'
+import { PublicPredictionsList } from '@/components/public-predictions-list'
 import { formatCompetitionRound, formatGroupName } from '@/lib/format-text'
 import type { Database } from '@/types/database'
 import { ChevronLeft, Calendar, MapPin, LogIn } from 'lucide-react'
 
 type Match = Database['public']['Tables']['matches']['Row']
+type Prediction = Database['public']['Tables']['predictions']['Row']
+type Profile = Database['public']['Tables']['profiles']['Row']
+
+interface PredictionWithUser extends Prediction {
+  profiles: Profile
+}
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -23,7 +30,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  const supabase = await createServerClient()
+  const supabase = createPublicClient()
   
   const { data: match } = await supabase
     .from('matches')
@@ -72,7 +79,7 @@ function getHostCountryClass(venue: string | null): string {
 
 export default async function PublicMatchDetailPage({ params }: PageProps) {
   const { id } = await params
-  const supabase = await createServerClient()
+  const supabase = createPublicClient()
 
   // Fetch match details (public access)
   const { data: match, error: matchError } = await supabase
@@ -103,6 +110,23 @@ export default async function PublicMatchDetailPage({ params }: PageProps) {
   }
 
   const typedMatch = match as Match
+
+  // Fetch ALL predictions for this match (public access)
+  const { data: predictions } = await supabase
+    .from('predictions')
+    .select(`
+      *,
+      profiles (
+        id,
+        username,
+        avatar_url,
+        full_name
+      )
+    `)
+    .eq('match_id', typedMatch.id)
+    .order('created_at', { ascending: false })
+
+  const allPredictions = (predictions || []) as unknown as PredictionWithUser[]
 
   // Check if match is locked
   const now = new Date()
@@ -236,6 +260,14 @@ export default async function PublicMatchDetailPage({ params }: PageProps) {
             </div>
           )}
 
+        </div>
+
+        {/* Show all predictions to everyone (always show, handles empty state) */}
+        <div className="mb-8">
+          <PublicPredictionsList 
+            predictions={allPredictions as any} 
+            matchStatus={typedMatch.status}
+          />
         </div>
 
         {/* CTA to Sign In */}

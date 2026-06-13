@@ -96,3 +96,37 @@ export function createServiceRoleClient() {
     }
   )
 }
+
+/**
+ * Creates an anonymous Supabase client for public pages.
+ * Does not use authentication - suitable for public data access.
+ * Still respects Row Level Security (RLS) policies.
+ * 
+ * Use this for:
+ * - Public pages that don't require authentication
+ * - Pages that should work even with expired JWT tokens
+ * - Landing pages, public leaderboards, public match lists, etc.
+ * 
+ * Usage:
+ * ```tsx
+ * import { createPublicClient } from '@/lib/supabase/server'
+ * 
+ * export default async function PublicPage() {
+ *   const supabase = createPublicClient()
+ *   const { data } = await supabase.from('matches').select()
+ *   // ...
+ * }
+ * ```
+ */
+export function createPublicClient() {
+  return createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  )
+}

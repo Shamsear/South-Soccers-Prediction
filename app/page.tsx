@@ -6,11 +6,11 @@ import { Calendar, Target, Star, Globe, ArrowRight, ChevronRight } from "lucide-
 export default async function Home() {
   const supabase = await createServerClient();
 
-  // Check if user is logged in
-  const { data: { user } } = await supabase.auth.getUser();
+  // Check if user is logged in (handle expired tokens gracefully)
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-  // If logged in, check if admin and redirect accordingly
-  if (user) {
+  // If logged in and no error, check if admin and redirect accordingly
+  if (user && !userError) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')

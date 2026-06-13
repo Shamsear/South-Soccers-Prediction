@@ -6,7 +6,7 @@
 
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { createServerClient } from '@/lib/supabase/server'
+import { createPublicClient } from '@/lib/supabase/server'
 import type { Database } from '@/types/database'
 import { Trophy, Calendar, Target } from 'lucide-react'
 import { MatchesFilter } from '@/components/matches-filter'
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 type Match = Database['public']['Tables']['matches']['Row']
 
 export default async function PublicMatchesPage() {
-  const supabase = await createServerClient()
+  const supabase = createPublicClient()
 
   // Fetch all matches (public access, no auth required for reading matches)
   const { data: matches, error: matchesError } = await supabase
@@ -119,7 +119,7 @@ export default async function PublicMatchesPage() {
 
         {/* Filters and Match List - Using same component as authenticated page */}
         {matches && matches.length > 0 && (
-          <MatchesFilter matches={matches} />
+          <MatchesFilter matches={matches} linkPrefix="/public-matches" />
         )}
 
         {/* CTA signup */}

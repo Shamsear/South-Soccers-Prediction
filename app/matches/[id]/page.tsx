@@ -17,6 +17,7 @@ import { PredictionForm } from '@/components/prediction-form'
 import { CountdownTimer } from '@/components/countdown-timer'
 import { TeamLogoBadge } from '@/components/team-logo-badge'
 import { AdminPredictionsList } from '@/components/admin-predictions-list'
+import { PublicPredictionsList } from '@/components/public-predictions-list'
 import { formatCompetitionRound, formatGroupName } from '@/lib/format-text'
 import type { Database } from '@/types/database'
 import { ChevronLeft, Calendar, MapPin, Award } from 'lucide-react'
@@ -143,7 +144,7 @@ export default async function MatchDetailPage({ params }: PageProps) {
 
   const typedMatch = match as Match
 
-  // Fetch user's prediction for this match (for regular users)
+  // Fetch user's prediction for this match
   const { data: userPrediction } = await supabase
     .from('predictions')
     .select('*')
@@ -151,28 +152,22 @@ export default async function MatchDetailPage({ params }: PageProps) {
     .eq('match_id', typedMatch.id)
     .maybeSingle()
 
-  // Fetch ALL predictions if admin
-  let allPredictions: PredictionWithUser[] = []
-  if (isAdmin) {
-    const { createServiceRoleClient } = await import('@/lib/supabase/server')
-    const adminSupabase = createServiceRoleClient()
-    
-    const { data: predictions } = await adminSupabase
-      .from('predictions')
-      .select(`
-        *,
-        profiles (
-          id,
-          username,
-          avatar_url,
-          full_name
-        )
-      `)
-      .eq('match_id', typedMatch.id)
-      .order('created_at', { ascending: false })
+  // Fetch ALL predictions for this match (visible to everyone)
+  const { data: predictions } = await supabase
+    .from('predictions')
+    .select(`
+      *,
+      profiles (
+        id,
+        username,
+        avatar_url,
+        full_name
+      )
+    `)
+    .eq('match_id', typedMatch.id)
+    .order('created_at', { ascending: false })
 
-    allPredictions = (predictions || []) as unknown as PredictionWithUser[]
-  }
+  const allPredictions = (predictions || []) as unknown as PredictionWithUser[]
 
   // Check if match is locked
   const now = new Date()
@@ -308,62 +303,32 @@ export default async function MatchDetailPage({ params }: PageProps) {
 
         </div>
 
-        {/* Admin View: All Predictions */}
+        {/* Admin View: All Predictions (with admin controls) */}
         {isAdmin ? (
           <AdminPredictionsList predictions={allPredictions as any} />
         ) : (
-          /* Regular User View: Prediction Form */
-          <div className="bg-[#0E0E13] border-2 border-white/5 p-6 md:p-10 rounded shadow-2xl">
-            {typedMatch.status === 'finished' && userPrediction ? (
-              <div className="text-center py-4">
-                <h3 className="text-xl font-heading font-black text-[#F3A81D] mb-6 uppercase tracking-wider">
-                  Your Prediction Result
-                </h3>
-                
-                <div className="inline-flex items-center gap-6 justify-center bg-black/40 border-2 border-white/5 rounded px-8 py-4 mb-8">
-                  <div className="text-center">
-                    <p className="text-[10px] text-[#8A92A6] uppercase font-black tracking-wider mb-1">
-                      {typedMatch.home_team}
-                    </p>
-                    <p className="text-3xl font-black text-white">{userPrediction.predicted_home}</p>
-                  </div>
-                  <span className="text-white/40 text-xl font-bold">-</span>
-                  <div className="text-center">
-                    <p className="text-[10px] text-[#8A92A6] uppercase font-black tracking-wider mb-1">
-                      {typedMatch.away_team}
-                    </p>
-                    <p className="text-3xl font-black text-white">{userPrediction.predicted_away}</p>
-                  </div>
-                </div>
-                
-                {userPrediction.points_awarded !== null && (
-                  <div className="pt-6 border-t border-white/5 flex flex-col items-center">
-                    <div className="w-12 h-12 rounded bg-[#F3A81D]/10 border border-[#F3A81D]/25 flex items-center justify-center mb-3">
-                      <Award className="w-6 h-6 text-[#F3A81D]" />
-                    </div>
-                    <p className="text-xs text-[#8A92A6] font-black uppercase tracking-wider">Points Secured</p>
-                    <p className="text-5xl font-black text-[#F3A81D] mt-1 font-heading">
-                      {userPrediction.points_awarded}
-                    </p>
-                    <p className="text-sm font-black uppercase mt-4 text-white tracking-wide">
-                      {userPrediction.points_awarded === 3 && '🎯 Outstanding! Exact Scoreline Prediction!'}
-                      {userPrediction.points_awarded === 1 && '✓ Good job! Correct result predicted.'}
-                      {userPrediction.points_awarded === 0 && 'Better luck next time!'}
-                    </p>
-                  </div>
-                )}
+          <>
+            {/* Regular User View: Show prediction form only if match is not finished */}
+            {typedMatch.status !== 'finished' && (
+              <div className="bg-[#0E0E13] border-2 border-white/5 p-6 md:p-10 rounded shadow-2xl mb-8">
+                <PredictionForm
+                  matchId={typedMatch.id}
+                  kickoffTime={typedMatch.kickoff_time}
+                  existingPrediction={userPrediction}
+                  isLocked={isLocked || typedMatch.status !== 'upcoming'}
+                  homeTeam={typedMatch.home_team}
+                  awayTeam={typedMatch.away_team}
+                />
               </div>
-            ) : (
-              <PredictionForm
-                matchId={typedMatch.id}
-                kickoffTime={typedMatch.kickoff_time}
-                existingPrediction={userPrediction}
-                isLocked={isLocked || typedMatch.status !== 'upcoming'}
-                homeTeam={typedMatch.home_team}
-                awayTeam={typedMatch.away_team}
-              />
             )}
-          </div>
+
+            {/* Show all predictions to everyone (always show the section even if user hasn't predicted) */}
+            <PublicPredictionsList 
+              predictions={allPredictions as any} 
+              matchStatus={typedMatch.status}
+              currentUserId={user.id}
+            />
+          </>
         )}
 
       </div>

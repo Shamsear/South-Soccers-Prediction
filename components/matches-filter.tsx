@@ -15,9 +15,10 @@ type Match = Database['public']['Tables']['matches']['Row']
 
 interface MatchesFilterProps {
   matches: Match[]
+  linkPrefix?: '/matches' | '/public-matches'
 }
 
-export function MatchesFilter({ matches }: MatchesFilterProps) {
+export function MatchesFilter({ matches, linkPrefix = '/matches' }: MatchesFilterProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedGroup, setSelectedGroup] = useState<string>('all')
   const [selectedDate, setSelectedDate] = useState<string>('all')
@@ -180,6 +181,7 @@ export function MatchesFilter({ matches }: MatchesFilterProps) {
                     match={match}
                     showGroupBadge={true}
                     isClickable={true}
+                    linkPrefix={linkPrefix}
                   />
                 ))}
               </div>
