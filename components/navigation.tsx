@@ -10,7 +10,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import { MobileNav } from './mobile-nav'
 import { NavLinks } from './nav-links'
 import { UserDropdown } from './user-dropdown'
-import { LogIn, Calendar, Trophy, Target } from 'lucide-react'
+import { LogIn, Calendar, Trophy, Target, User } from 'lucide-react'
 
 export async function Navigation() {
   const supabase = await createServerClient()
@@ -135,10 +135,10 @@ export async function Navigation() {
         </div>
       </nav>
 
-      {/* Mobile Header - Minimal logo only */}
+      {/* Mobile Header - Logo with Profile Button */}
       <div className="lg:hidden glass-header border-b border-white/5 relative z-50">
         <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-center">
+          <div className="flex h-16 items-center justify-between">
             <Link href={user ? "/matches" : "/"} className="flex items-center gap-2.5 group">
               <div className="w-10 h-10 relative flex items-center justify-center bg-gradient-to-br from-black/40 to-black/20 rounded-lg border-2 border-white/10 p-1.5 group-hover:border-[#F3A81D]/60 transition-all duration-300 shadow-lg">
                 <img 
@@ -156,6 +156,28 @@ export async function Navigation() {
                 </span>
               </div>
             </Link>
+
+            {/* Mobile Profile Button */}
+            {user && (
+              <Link 
+                href="/profile"
+                className="flex-shrink-0 group"
+              >
+                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 group-hover:border-[#F3A81D] transition-all duration-300 shadow-lg group-hover:shadow-[#F3A81D]/30">
+                  {profile?.avatar_url ? (
+                    <img 
+                      src={profile.avatar_url} 
+                      alt={profile.username || 'User'} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#F3A81D]/20 to-[#F3A81D]/10 flex items-center justify-center">
+                      <User className="w-5 h-5 text-[#F3A81D]" />
+                    </div>
+                  )}
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </div>

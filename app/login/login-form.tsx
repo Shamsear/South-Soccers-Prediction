@@ -64,20 +64,20 @@ export function LoginForm() {
   }
 
   return (
-    <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-8 shadow-2xl">
-      <div className="mb-6">
-        <h2 className="text-2xl font-black text-white uppercase tracking-wide">Sign In</h2>
-        <p className="text-[#8A92A6] text-xs mt-1">
+    <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-4 md:p-8 shadow-2xl">
+      <div className="mb-4 md:mb-6">
+        <h2 className="text-lg md:text-2xl font-black text-white uppercase tracking-wide">Sign In</h2>
+        <p className="text-[#8A92A6] text-[10px] md:text-xs mt-1">
           Enter your credentials to access your account
         </p>
       </div>
 
-      <form action={formAction} className="space-y-4">
+      <form action={formAction} className="space-y-3 md:space-y-4">
         
         {/* Username */}
         <div>
-          <label htmlFor="username" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-            <User className="w-4 h-4 text-[#F3A81D]" />
+          <label htmlFor="username" className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-1.5 md:mb-2">
+            <User className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
             Username
           </label>
           <input
@@ -88,14 +88,14 @@ export function LoginForm() {
             disabled={isPending}
             required
             autoComplete="username"
-            className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
+            className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
           />
         </div>
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-            <KeyRound className="w-4 h-4 text-[#F3A81D]" />
+          <label htmlFor="password" className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-1.5 md:mb-2">
+            <KeyRound className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
             Password
           </label>
           <div className="relative">
@@ -107,18 +107,18 @@ export function LoginForm() {
               disabled={isPending}
               required
               autoComplete="current-password"
-              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 pr-12 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
+              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-2 pr-10 md:px-4 md:py-3 md:pr-12 text-xs md:text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A92A6] hover:text-[#F3A81D] transition-colors focus:outline-none"
+              className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 text-[#8A92A6] hover:text-[#F3A81D] transition-colors focus:outline-none"
               tabIndex={-1}
             >
               {showPassword ? (
-                <EyeOff className="w-5 h-5" />
+                <EyeOff className="w-4 h-4 md:w-5 md:h-5" />
               ) : (
-                <Eye className="w-5 h-5" />
+                <Eye className="w-4 h-4 md:w-5 md:h-5" />
               )}
             </button>
           </div>
@@ -129,7 +129,7 @@ export function LoginForm() {
           <button
             type="button"
             onClick={() => setShowUsernameLookup(!showUsernameLookup)}
-            className="text-xs text-[#F3A81D] hover:text-[#FFD700] font-bold transition-colors"
+            className="text-[10px] md:text-xs text-[#F3A81D] hover:text-[#FFD700] font-bold transition-colors"
           >
             {showUsernameLookup ? 'Back to Login' : 'Forgot Username? Find it using phone number'}
           </button>
@@ -137,31 +137,31 @@ export function LoginForm() {
 
         {/* Username Lookup Panel */}
         {showUsernameLookup && (
-          <div className="bg-[#F3A81D]/5 border-2 border-[#F3A81D]/20 rounded-lg p-4">
-            <h3 className="text-sm font-black text-[#F3A81D] uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Search className="w-4 h-4" />
+          <div className="bg-[#F3A81D]/5 border-2 border-[#F3A81D]/20 rounded-lg p-3 md:p-4">
+            <h3 className="text-xs md:text-sm font-black text-[#F3A81D] uppercase tracking-wider mb-2 md:mb-3 flex items-center gap-1.5">
+              <Search className="w-3 h-3 md:w-4 md:h-4" />
               Find Your Username
             </h3>
-            <p className="text-xs text-[#8A92A6] mb-3">
+            <p className="text-[10px] md:text-xs text-[#8A92A6] mb-2 md:mb-3">
               Enter your phone number to retrieve your username
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5 md:gap-2">
               <div className="relative flex-1">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#8A92A6]" />
+                <Phone className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 text-[#8A92A6]" />
                 <input
                   type="tel"
                   placeholder="+1234567890"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   disabled={isLookingUp}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#050508]/60 border border-white/10 focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 rounded-lg text-sm font-bold text-white placeholder-[#8A92A6] focus:outline-none transition-all disabled:opacity-50"
+                  className="w-full pl-8 md:pl-10 pr-2 md:pr-4 py-2 md:py-2.5 bg-[#050508]/60 border border-white/10 focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 rounded-lg text-xs md:text-sm font-bold text-white placeholder-[#8A92A6] focus:outline-none transition-all disabled:opacity-50"
                 />
               </div>
               <button
                 type="button"
                 onClick={handleUsernameLookup}
                 disabled={isLookingUp || !phoneNumber}
-                className="px-4 py-2.5 bg-[#F3A81D] hover:bg-[#FFD700] text-black font-black text-xs uppercase tracking-wider rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 md:px-4 py-2 md:py-2.5 bg-[#F3A81D] hover:bg-[#FFD700] text-black font-black text-[10px] md:text-xs uppercase tracking-wider rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 {isLookingUp ? 'Searching...' : 'Find'}
               </button>
@@ -170,8 +170,8 @@ export function LoginForm() {
         )}
 
         {state?.error && (
-          <div className="bg-[#D80027]/10 border border-[#D80027]/30 rounded-lg p-3" role="alert">
-            <p className="text-sm text-[#D80027] font-semibold">{state.error}</p>
+          <div className="bg-[#D80027]/10 border border-[#D80027]/30 rounded-lg p-2 md:p-3" role="alert">
+            <p className="text-xs md:text-sm text-[#D80027] font-semibold">{state.error}</p>
           </div>
         )}
 
@@ -179,9 +179,9 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full bg-gradient-to-r from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white font-black text-sm uppercase tracking-wider py-4 rounded-lg transition-all duration-300 shadow-lg shadow-[#F3A81D]/30 hover:shadow-xl hover:shadow-[#F3A81D]/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+          className="w-full bg-gradient-to-r from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white font-black text-xs md:text-sm uppercase tracking-wider py-3 md:py-4 rounded-lg transition-all duration-300 shadow-lg shadow-[#F3A81D]/30 hover:shadow-xl hover:shadow-[#F3A81D]/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 md:gap-2 group"
         >
-          <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          <LogIn className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
           {isPending ? 'Signing In...' : 'Sign In'}
         </button>
       </form>
