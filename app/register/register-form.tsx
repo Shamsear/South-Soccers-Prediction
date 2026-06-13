@@ -393,27 +393,27 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-6 sm:p-8 shadow-2xl">
-      <div className="mb-5">
-        <h2 className="text-2xl font-black text-white uppercase tracking-wide">Create Account</h2>
-        <p className="text-[#8A92A6] text-xs mt-1">
+    <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-4 md:p-6 lg:p-8 shadow-2xl">
+      <div className="mb-3 md:mb-5">
+        <h2 className="text-lg md:text-2xl font-black text-white uppercase tracking-wide">Create Account</h2>
+        <p className="text-[#8A92A6] text-[10px] md:text-xs mt-1">
           Join the South Soccers prediction competition
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
           {/* Avatar Upload */}
           <div>
-            <label htmlFor="avatar" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-              <ImageIcon className="w-4 h-4 text-[#F3A81D]" />
+            <label htmlFor="avatar" className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-1.5 md:mb-2">
+              <ImageIcon className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
               Profile Photo (Optional)
             </label>
-            <div className="flex items-center gap-3">
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#F3A81D] to-[#D80027] flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-lg flex-shrink-0">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-[#F3A81D] to-[#D80027] flex items-center justify-center overflow-hidden border-2 border-white/10 shadow-lg flex-shrink-0">
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar preview" className="w-full h-full object-cover" />
                 ) : (
-                  <UserCircle className="w-10 h-10 text-white/40" />
+                  <UserCircle className="w-6 h-6 md:w-10 md:h-10 text-white/40" />
                 )}
               </div>
               <div className="flex-1">
@@ -423,17 +423,17 @@ export function RegisterForm() {
                   accept="image/jpeg,image/png,image/gif,image/webp"
                   onChange={handleAvatarChange}
                   disabled={isPending}
-                  className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-bold file:bg-[#F3A81D]/10 file:text-[#F3A81D] hover:file:bg-[#F3A81D]/20 file:cursor-pointer disabled:opacity-50"
+                  className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-2 py-1.5 md:px-3 md:py-2 text-[10px] md:text-xs font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all file:mr-1.5 file:py-0.5 file:px-1.5 md:file:py-1 md:file:px-2 file:rounded file:border-0 file:text-[10px] md:file:text-xs file:font-bold file:bg-[#F3A81D]/10 file:text-[#F3A81D] hover:file:bg-[#F3A81D]/20 file:cursor-pointer disabled:opacity-50"
                 />
-                <p className="text-[10px] text-[#8A92A6] mt-1">Max 2MB</p>
+                <p className="text-[9px] md:text-[10px] text-[#8A92A6] mt-0.5 md:mt-1">Max 2MB</p>
               </div>
             </div>
           </div>
 
           {/* Full Name */}
           <div>
-            <label htmlFor="fullName" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-              <UserCircle className="w-4 h-4 text-[#F3A81D]" />
+            <label htmlFor="fullName" className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-1.5 md:mb-2">
+              <UserCircle className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
               Full Name <span className="text-[#D80027] ml-1">*</span>
             </label>
             <input
@@ -446,14 +446,14 @@ export function RegisterForm() {
               required
               autoComplete="name"
               minLength={2}
-              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
+              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
             />
           </div>
 
           {/* Username */}
           <div>
-            <label htmlFor="username" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-              <User className="w-4 h-4 text-[#F3A81D]" />
+            <label htmlFor="username" className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-1.5 md:mb-2">
+              <User className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
               Username <span className="text-[#D80027] ml-1">*</span>
             </label>
             <input
@@ -467,9 +467,9 @@ export function RegisterForm() {
               autoComplete="username"
               minLength={3}
               maxLength={20}
-              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
+              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
             />
-            <p className="text-[10px] text-[#8A92A6] mt-1">This will be your login username</p>
+            <p className="text-[9px] md:text-[10px] text-[#8A92A6] mt-0.5 md:mt-1">This will be your login username</p>
           </div>
 
           {/* Phone Number with Country Code */}
@@ -479,15 +479,15 @@ export function RegisterForm() {
             onChange={setCountryCode}
             placeholder="Select country code..."
             disabled={isPending}
-            icon={<Globe className="w-4 h-4 text-[#F3A81D]" />}
+            icon={<Globe className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />}
             label="Country Code"
             description="Select your country dialing code"
           />
 
           {/* Phone Number */}
           <div>
-            <label htmlFor="phone" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-              <Phone className="w-4 h-4 text-[#F3A81D]" />
+            <label htmlFor="phone" className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-1.5 md:mb-2">
+              <Phone className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
               Phone Number (Optional)
             </label>
             <input
@@ -498,14 +498,14 @@ export function RegisterForm() {
               onChange={(e) => setPhone(e.target.value)}
               disabled={isPending}
               autoComplete="tel"
-              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
+              className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="flex items-center gap-2 text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-2">
-              <KeyRound className="w-4 h-4 text-[#F3A81D]" />
+            <label htmlFor="password" className="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-[#F3A81D] uppercase tracking-wider mb-1.5 md:mb-2">
+              <KeyRound className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
               Password <span className="text-[#D80027] ml-1">*</span>
             </label>
             <div className="relative">
@@ -519,18 +519,18 @@ export function RegisterForm() {
                 required
                 autoComplete="new-password"
                 minLength={8}
-                className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-4 py-3 pr-12 text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
+                className="w-full bg-[#050508]/60 border border-white/10 rounded-lg px-3 py-2 pr-10 md:px-4 md:py-3 md:pr-12 text-xs md:text-sm font-bold text-white focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 transition-all placeholder:text-[#8A92A6] disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A92A6] hover:text-[#F3A81D] transition-colors focus:outline-none"
+                className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 text-[#8A92A6] hover:text-[#F3A81D] transition-colors focus:outline-none"
                 tabIndex={-1}
               >
                 {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
+                  <EyeOff className="w-4 h-4 md:w-5 md:h-5" />
                 ) : (
-                  <Eye className="w-5 h-5" />
+                  <Eye className="w-4 h-4 md:w-5 md:h-5" />
                 )}
               </button>
             </div>
@@ -540,9 +540,9 @@ export function RegisterForm() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-gradient-to-r from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white font-black text-sm uppercase tracking-wider py-4 rounded-lg transition-all duration-300 shadow-lg shadow-[#F3A81D]/30 hover:shadow-xl hover:shadow-[#F3A81D]/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group mt-6"
+            className="w-full bg-gradient-to-r from-[#F3A81D] to-[#D80027] hover:from-[#D80027] hover:to-[#F3A81D] text-white font-black text-xs md:text-sm uppercase tracking-wider py-3 md:py-4 rounded-lg transition-all duration-300 shadow-lg shadow-[#F3A81D]/30 hover:shadow-xl hover:shadow-[#F3A81D]/50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 md:gap-2 group mt-4 md:mt-6"
           >
-            <ShieldAlert className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <ShieldAlert className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
             {isPending ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
