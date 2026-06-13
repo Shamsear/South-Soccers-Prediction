@@ -1,29 +1,33 @@
 /**
- * User Prediction History Page
+ * My Predictions Page - All Matches with Expandable Predictions
  * 
- * Displays list of user's predictions with calculated statistics
- * and premium status badges.
+ * Shows all matches with search/filter functionality
+ * Each match can be expanded to view all predictions and points
  */
 
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServerClient } from '@/lib/supabase/server'
-import { Trophy, Award, Calendar, ChevronLeft, CalendarDays, CheckCircle2, XCircle, Clock, TrendingUp } from 'lucide-react'
+import { MatchWithPredictionsCard } from '@/components/match-with-predictions-card'
+import { Trophy, ChevronLeft, Target } from 'lucide-react'
+import type { Database } from '@/types/database'
 
 export const metadata: Metadata = {
   title: 'My Predictions | South Soccers Prediction League',
-  description: 'View your prediction history and statistics',
+  description: 'View all matches and predictions',
 }
 
-function formatDate(isoString: string): string {
-  const date = new Date(isoString)
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+type Match = Database['public']['Tables']['matches']['Row']
+type Prediction = Database['public']['Tables']['predictions']['Row']
+type Profile = Database['public']['Tables']['profiles']['Row']
+
+interface PredictionWithUser extends Prediction {
+  profiles: Profile
+}
+
+interface MatchWithPredictions extends Match {
+  predictions: PredictionWithUser[]
 }
 
 export default async function MyPredictionsPage() {
@@ -47,273 +51,150 @@ export default async function MyPredictionsPage() {
     redirect('/admin')
   }
 
-  // Query all predictions for current user with JOIN to matches table
-  const { data: predictions, error: predictionsError } = await supabase
+  // Fetch all matches
+  const { data: matches } = await supabase
+    .from('matches')
+    .select('*')
+    .order('kickoff_time', { ascending: true })
+
+  // Fetch all predictions for all matches
+  const { data: allPredictions } = await supabase
     .from('predictions')
     .select(`
       *,
-      matches (
+      profiles (
         id,
-        home_team,
-        away_team,
-        home_score,
-        away_score,
-        status,
-        kickoff_time,
-        competition_round,
-        group_name
+        username,
+        avatar_url,
+        full_name
       )
     `)
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
 
-  if (predictionsError) {
-    console.error('Error fetching predictions:', predictionsError)
+  // Group predictions by match_id
+  const predictionsByMatch: Record<string, PredictionWithUser[]> = {}
+  if (allPredictions) {
+    for (const pred of allPredictions as unknown as PredictionWithUser[]) {
+      if (!predictionsByMatch[pred.match_id]) {
+        predictionsByMatch[pred.match_id] = []
+      }
+      predictionsByMatch[pred.match_id].push(pred)
+    }
   }
 
-  // Calculate summary statistics
-  const totalPredictions = predictions?.length || 0
-  const scoredPredictions = predictions?.filter(p => p.points_awarded !== null) || []
-  const totalPoints = scoredPredictions.reduce((sum, p) => sum + (p.points_awarded || 0), 0)
-  const exactScores = scoredPredictions.filter(p => p.points_awarded === 3).length
-  const correctResults = scoredPredictions.filter(p => p.points_awarded === 1).length
-  const successRate = scoredPredictions.length > 0
-    ? Math.round(((exactScores + correctResults) / scoredPredictions.length) * 100)
-    : 0
+  // Combine matches with their predictions
+  const matchesWithPredictions: MatchWithPredictions[] = (matches || []).map(match => ({
+    ...match,
+    predictions: predictionsByMatch[match.id] || []
+  }))
+
+  // Group by round
+  const groupedMatches: Record<string, MatchWithPredictions[]> = matchesWithPredictions.reduce((acc, match) => {
+    const round = match.competition_round
+    if (!acc[round]) {
+      acc[round] = []
+    }
+    acc[round].push(match)
+    return acc
+  }, {} as Record<string, MatchWithPredictions[]>)
+
+  const rounds = Object.keys(groupedMatches).sort()
+
+  // Calculate stats
+  const totalMatches = matchesWithPredictions.length
+  const upcomingMatches = matchesWithPredictions.filter(m => m.status === 'upcoming').length
+  const liveMatches = matchesWithPredictions.filter(m => m.status === 'live').length
+  const finishedMatches = matchesWithPredictions.filter(m => m.status === 'finished').length
 
   return (
-    <div className="relative min-h-screen bg-[#030306] overflow-hidden">
-      
+    <div className="relative min-h-screen bg-[#030306] py-12 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
       <div className="absolute top-[-5%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#F3A81D]/6 blur-[150px] pointer-events-none animate-float-slow" />
 
-      <div className="container mx-auto px-4 py-12 max-w-7xl relative z-10">
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
         
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-8">
           <Link
-            href="/matches"
-            className="inline-flex items-center gap-2 text-[#F3A81D] hover:text-[#FFD700] font-bold mb-4 transition-colors text-sm"
+            href="/dashboard"
+            className="btn-tactile btn-tactile-outline text-[11px] py-2 px-4 flex items-center gap-1.5 w-max mb-6"
           >
-            ← Back to Matches
+            <ChevronLeft className="w-4 h-4" />
+            Back to Dashboard
           </Link>
+
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#F3A81D] to-[#FFA500] flex items-center justify-center">
-              <Trophy className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#D80027] to-[#8B0A1E] flex items-center justify-center">
+              <Target className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F3A81D] to-white uppercase tracking-tight">
-                My Predictions
+                All Predictions
               </h1>
               <p className="text-[#C1C5D0] text-sm mt-1">
-                {totalPredictions} total predictions • Track your performance history
+                View all matches and predictions from the community
               </p>
             </div>
           </div>
         </div>
 
-        {/* Summary Statistics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          
-          {/* Total Points */}
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#F3A81D]/10 to-transparent rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-            <div className="relative bg-black/40 backdrop-blur-sm border border-[#F3A81D]/20 rounded-2xl p-6 hover:border-[#F3A81D]/40 transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-lg bg-[#F3A81D]/10 flex items-center justify-center">
-                  <Trophy className="w-5 h-5 text-[#F3A81D]" />
-                </div>
-              </div>
-              <p className="text-[#C1C5D0] text-xs font-bold uppercase tracking-wider mb-1">
-                Total Points
-              </p>
-              <p className="text-4xl font-black text-white leading-none">
-                {totalPoints}
-              </p>
-            </div>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
+            <p className="text-[10px] font-black text-[#8A92A6] uppercase mb-1">Total</p>
+            <p className="text-2xl font-black text-white">{totalMatches}</p>
           </div>
 
-          {/* Total Predictions */}
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-            <div className="relative bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
-                  <CalendarDays className="w-5 h-5 text-white/70" />
-                </div>
-              </div>
-              <p className="text-[#C1C5D0] text-xs font-bold uppercase tracking-wider mb-1">
-                Submitted
-              </p>
-              <p className="text-4xl font-black text-white leading-none">
-                {totalPredictions}
-              </p>
-            </div>
+          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
+            <p className="text-[10px] font-black text-[#8A92A6] uppercase mb-1">Upcoming</p>
+            <p className="text-2xl font-black text-white">{upcomingMatches}</p>
           </div>
 
-          {/* Exact Scores */}
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-            <div className="relative bg-black/40 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6 hover:border-emerald-500/40 transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                  <Award className="w-5 h-5 text-emerald-400" />
-                </div>
-              </div>
-              <p className="text-[#C1C5D0] text-xs font-bold uppercase tracking-wider mb-1">
-                Exact Scores
-              </p>
-              <p className="text-4xl font-black text-emerald-400 leading-none">
-                {exactScores}
-              </p>
-            </div>
+          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
+            <p className="text-[10px] font-black text-[#8A92A6] uppercase mb-1">Live</p>
+            <p className="text-2xl font-black text-white">{liveMatches}</p>
           </div>
 
-          {/* Success Rate */}
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0052B4]/10 to-transparent rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-            <div className="relative bg-black/40 backdrop-blur-sm border border-[#0052B4]/20 rounded-2xl p-6 hover:border-[#0052B4]/40 transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-lg bg-[#0052B4]/10 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-[#0052B4]" />
-                </div>
-              </div>
-              <p className="text-[#C1C5D0] text-xs font-bold uppercase tracking-wider mb-1">
-                Success Rate
-              </p>
-              <p className="text-4xl font-black text-[#0052B4] leading-none">
-                {successRate}%
-              </p>
-            </div>
+          <div className="bg-[#0E0E13] border border-white/5 p-4 rounded-xl">
+            <p className="text-[10px] font-black text-[#8A92A6] uppercase mb-1">Finished</p>
+            <p className="text-2xl font-black text-white">{finishedMatches}</p>
           </div>
         </div>
 
-        {/* Prediction List */}
-        <div className="space-y-4">
-          {predictions && predictions.length > 0 ? (
-            predictions.map((prediction) => {
-              const match = prediction.matches as any
-              const isPending = prediction.points_awarded === null
-              const isExactScore = prediction.points_awarded === 3
-              const isCorrectResult = prediction.points_awarded === 1
-              const isIncorrect = prediction.points_awarded === 0
+        {/* Matches by Round */}
+        <div className="space-y-12">
+          {rounds.length > 0 ? (
+            rounds.map(round => (
+              <div key={round} className="space-y-6">
+                {/* Round Title */}
+                <div className="flex items-center gap-4">
+                  <h2 className="text-xl md:text-2xl font-black text-[#F3A81D] tracking-widest uppercase font-heading">
+                    {round.replace(/_/g, ' ')}
+                  </h2>
+                  <div className="h-[2px] flex-1 bg-gradient-to-r from-[#F3A81D]/30 to-transparent" />
+                </div>
 
-              let badgeStyle = "bg-zinc-800/60 text-zinc-400 border border-zinc-700/50"
-              let badgeText = "Pending"
-              let badgeIcon = <Clock className="w-3.5 h-3.5" />
-
-              if (isExactScore) {
-                badgeStyle = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                badgeText = "Exact Score"
-                badgeIcon = <CheckCircle2 className="w-3.5 h-3.5" />
-              } else if (isCorrectResult) {
-                badgeStyle = "bg-[#0052B4]/10 text-[#0052B4] border border-[#0052B4]/30"
-                badgeText = "Correct Result"
-                badgeIcon = <CheckCircle2 className="w-3.5 h-3.5" />
-              } else if (isIncorrect) {
-                badgeStyle = "bg-[#D80027]/10 text-[#D80027] border border-[#D80027]/30"
-                badgeText = "Incorrect"
-                badgeIcon = <XCircle className="w-3.5 h-3.5" />
-              }
-
-              return (
-                <Link
-                  key={prediction.id}
-                  href={`/matches/${match.id}`}
-                  className="block group"
-                >
-                  <div className="bg-[#0E0E13] border-2 border-white/5 hover:border-[#F3A81D]/30 transition-all rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    
-                    {/* Left: Match Info */}
-                    <div className="flex-1 space-y-3">
-                      
-                      {/* Badges */}
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-[10px] text-[#F3A81D] font-black uppercase tracking-wider bg-[#F3A81D]/10 px-2 py-1 rounded border border-[#F3A81D]/20">
-                          {match.competition_round?.replace(/_/g, ' ')}
-                        </span>
-                        {match.group_name && (
-                          <span className="text-[10px] text-[#8A92A6] uppercase font-black tracking-wider">
-                            {match.group_name.replace(/_/g, ' ')}
-                          </span>
-                        )}
-                        <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 ${badgeStyle}`}>
-                          {badgeIcon}
-                          {badgeText}
-                        </span>
-                      </div>
-
-                      {/* Teams & Scores */}
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between gap-8 max-w-sm">
-                          <span className="font-black text-sm text-white group-hover:text-[#F3A81D] transition-colors uppercase tracking-wide">
-                            {match.home_team}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <span className="font-black text-lg text-[#F3A81D]">
-                              {prediction.predicted_home}
-                            </span>
-                            {match.status === 'finished' && match.home_score !== null && (
-                              <span className="text-sm text-[#8A92A6] font-bold">
-                                ({match.home_score})
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between gap-8 max-w-sm">
-                          <span className="font-black text-sm text-white group-hover:text-[#F3A81D] transition-colors uppercase tracking-wide">
-                            {match.away_team}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <span className="font-black text-lg text-[#F3A81D]">
-                              {prediction.predicted_away}
-                            </span>
-                            {match.status === 'finished' && match.away_score !== null && (
-                              <span className="text-sm text-[#8A92A6] font-bold">
-                                ({match.away_score})
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Date */}
-                      <div className="flex items-center gap-1.5 text-[10px] text-[#8A92A6] font-bold">
-                        <Calendar className="w-3.5 h-3.5 text-[#F3A81D]" />
-                        <span>{formatDate(match.kickoff_time)}</span>
-                      </div>
-                    </div>
-
-                    {/* Right: Points Badge */}
-                    {!isPending && (
-                      <div className="flex flex-col items-center justify-center bg-black/40 border-2 border-[#F3A81D]/20 rounded-xl p-4 min-w-[80px] self-end sm:self-center">
-                        <span className="text-3xl font-black text-[#F3A81D] font-heading leading-none">
-                          +{prediction.points_awarded}
-                        </span>
-                        <span className="text-[8px] text-[#8A92A6] uppercase font-black tracking-widest mt-1.5">
-                          Points
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              )
-            })
+                {/* Match Cards */}
+                <div className="space-y-4">
+                  {groupedMatches[round].map(match => (
+                    <MatchWithPredictionsCard
+                      key={match.id}
+                      match={match}
+                      predictions={match.predictions}
+                      currentUserId={user.id}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
           ) : (
-            <div className="bg-[#0E0E13] border-2 border-white/5 rounded-xl p-12 text-center">
-              <p className="text-[#8A92A6] text-lg font-black uppercase mb-6">
-                No predictions yet
-              </p>
-              <Link href="/matches">
-                <button className="btn-tactile btn-tactile-red text-xs py-3 px-6">
-                  Start Predicting Matches
-                </button>
-              </Link>
+            <div className="bg-[#0E0E13] border-2 border-white/5 max-w-md mx-auto text-center p-12 rounded-xl">
+              <Trophy className="w-12 h-12 text-[#8A92A6]/40 mx-auto mb-4" />
+              <p className="text-[#8A92A6] text-lg font-black uppercase">No matches yet</p>
             </div>
           )}
         </div>
+
       </div>
     </div>
   )
