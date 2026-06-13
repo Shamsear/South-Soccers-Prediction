@@ -177,56 +177,56 @@ export default async function MatchDetailPage({ params }: PageProps) {
   const ticketHostClass = getHostCountryClass(typedMatch.venue)
 
   return (
-    <div className="relative min-h-screen bg-[#030306] py-12 overflow-hidden">
+    <div className="relative min-h-screen bg-[#030306] py-6 md:py-12 overflow-hidden">
       <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
 
-      <div className="container mx-auto px-4 max-w-5xl relative z-10">
+      <div className="container mx-auto px-3 md:px-4 max-w-5xl relative z-10">
         
         {/* Back Link */}
-        <div className="mb-8">
+        <div className="mb-4 md:mb-8">
           <Link
             href="/matches"
-            className="btn-tactile btn-tactile-outline text-[11px] py-2 px-4 flex items-center gap-1.5 w-max"
+            className="btn-tactile btn-tactile-outline text-[10px] md:text-[11px] py-1.5 md:py-2 px-3 md:px-4 flex items-center gap-1 md:gap-1.5 w-max"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-3 h-3 md:w-4 md:h-4" />
             Back to Matches
           </Link>
         </div>
 
         {/* Match Card */}
-        <div className={`ticket-card ${ticketHostClass} p-6 md:p-10 mb-8`}>
+        <div className={`ticket-card ${ticketHostClass} p-4 md:p-6 lg:p-10 mb-6 md:mb-8`}>
           
           {/* Round & Status */}
-          <div className="flex items-center justify-between border-b border-white/5 pb-5 mb-8">
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="px-3 py-1 bg-black/60 border border-white/10 text-[#F3A81D] text-[10px] font-black uppercase tracking-wider rounded-sm">
+          <div className="flex items-center justify-between border-b border-white/5 pb-3 md:pb-5 mb-4 md:mb-8">
+            <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+              <span className="px-2 py-0.5 md:px-3 md:py-1 bg-black/60 border border-white/10 text-[#F3A81D] text-[8px] md:text-[10px] font-black uppercase tracking-wider rounded-sm">
                 {formatCompetitionRound(typedMatch.competition_round)}
               </span>
               {typedMatch.group_name && (
-                <span className="text-[#8A92A6] font-black text-xs uppercase tracking-widest">
+                <span className="text-[#8A92A6] font-black text-[10px] md:text-xs uppercase tracking-widest">
                   {formatGroupName(typedMatch.group_name)}
                 </span>
               )}
             </div>
             
             {typedMatch.status === 'live' && (
-              <span className="px-3.5 py-1 bg-[#D80027]/25 border-2 border-[#D80027] text-white text-xs font-black uppercase tracking-widest animate-pulse rounded-sm">
+              <span className="px-2 py-0.5 md:px-3.5 md:py-1 bg-[#D80027]/25 border md:border-2 border-[#D80027] text-white text-[10px] md:text-xs font-black uppercase tracking-widest animate-pulse rounded-sm">
                 🔴 LIVE
               </span>
             )}
             {typedMatch.status === 'finished' && (
-              <span className="px-3 py-1 bg-zinc-800 border border-zinc-700 text-zinc-400 text-xs font-black uppercase tracking-wider rounded-sm">
+              <span className="px-2 py-0.5 md:px-3 md:py-1 bg-zinc-800 border border-zinc-700 text-zinc-400 text-[10px] md:text-xs font-black uppercase tracking-wider rounded-sm">
                 Finished
               </span>
             )}
           </div>
 
           {/* Teams Display */}
-          <div className="flex flex-row items-center justify-between gap-4 md:gap-8 mb-10">
+          <div className="flex flex-row items-center justify-between gap-2 md:gap-4 lg:gap-8 mb-6 md:mb-10">
             
             {/* Home Team */}
             <div className="flex-1 flex flex-col items-center text-center">
-              <div className="mb-4">
+              <div className="mb-2 md:mb-4">
                 <TeamLogoBadge
                   src={typedMatch.home_team_logo}
                   alt={typedMatch.home_team}
@@ -234,30 +234,30 @@ export default async function MatchDetailPage({ params }: PageProps) {
                   size="xl"
                 />
               </div>
-              <h2 className="text-base md:text-xl font-black text-white leading-tight uppercase tracking-wider">
+              <h2 className="text-sm md:text-base lg:text-xl font-black text-white leading-tight uppercase tracking-wider">
                 {typedMatch.home_team}
               </h2>
               {typedMatch.status === 'finished' && typedMatch.home_score !== null && (
-                <div className="text-4xl md:text-6xl font-black text-[#F3A81D] mt-3 font-heading tracking-tighter">
+                <div className="text-3xl md:text-4xl lg:text-6xl font-black text-[#F3A81D] mt-2 md:mt-3 font-heading tracking-tighter">
                   {typedMatch.home_score}
                 </div>
               )}
             </div>
 
             {/* VS Separator */}
-            <div className="flex flex-col items-center justify-center min-w-[50px]">
+            <div className="flex flex-col items-center justify-center min-w-[40px] md:min-w-[50px]">
               {typedMatch.status === 'live' ? (
-                <div className="flex items-center gap-1.5 bg-[#D80027]/20 border border-[#D80027]/40 px-3.5 py-1.5 rounded text-sm font-black text-[#D80027]">
+                <div className="flex items-center gap-1 md:gap-1.5 bg-[#D80027]/20 border border-[#D80027]/40 px-2 py-1 md:px-3.5 md:py-1.5 rounded text-xs md:text-sm font-black text-[#D80027]">
                   {typedMatch.home_score ?? 0} - {typedMatch.away_score ?? 0}
                 </div>
               ) : (
-                <span className="text-[#8A92A6]/40 text-xl md:text-2xl font-black font-heading">VS</span>
+                <span className="text-[#8A92A6]/40 text-lg md:text-xl lg:text-2xl font-black font-heading">VS</span>
               )}
             </div>
 
             {/* Away Team */}
             <div className="flex-1 flex flex-col items-center text-center">
-              <div className="mb-4">
+              <div className="mb-2 md:mb-4">
                 <TeamLogoBadge
                   src={typedMatch.away_team_logo}
                   alt={typedMatch.away_team}
@@ -265,11 +265,11 @@ export default async function MatchDetailPage({ params }: PageProps) {
                   size="xl"
                 />
               </div>
-              <h2 className="text-base md:text-xl font-black text-white leading-tight uppercase tracking-wider">
+              <h2 className="text-sm md:text-base lg:text-xl font-black text-white leading-tight uppercase tracking-wider">
                 {typedMatch.away_team}
               </h2>
               {typedMatch.status === 'finished' && typedMatch.away_score !== null && (
-                <div className="text-4xl md:text-6xl font-black text-[#F3A81D] mt-3 font-heading tracking-tighter">
+                <div className="text-3xl md:text-4xl lg:text-6xl font-black text-[#F3A81D] mt-2 md:mt-3 font-heading tracking-tighter">
                   {typedMatch.away_score}
                 </div>
               )}
@@ -281,22 +281,22 @@ export default async function MatchDetailPage({ params }: PageProps) {
           <div className="ticket-divider" />
 
           {/* Venue and Time */}
-          <div className="pt-4 space-y-3 flex flex-col items-center">
-            <div className="flex items-center gap-2 text-xs md:text-sm text-[#C1C5D0] font-semibold">
-              <Calendar className="w-4 h-4 text-[#F3A81D]" />
-              <span>{formatMatchDate(typedMatch.kickoff_time)}</span>
+          <div className="pt-3 md:pt-4 space-y-2 md:space-y-3 flex flex-col items-center">
+            <div className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs lg:text-sm text-[#C1C5D0] font-semibold">
+              <Calendar className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
+              <span className="text-center">{formatMatchDate(typedMatch.kickoff_time)}</span>
             </div>
             {typedMatch.venue && (
-              <div className="flex items-center gap-2 text-xs md:text-sm text-[#C1C5D0] font-semibold">
-                <MapPin className="w-4 h-4 text-[#F3A81D]" />
-                <span>{typedMatch.venue}</span>
+              <div className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs lg:text-sm text-[#C1C5D0] font-semibold">
+                <MapPin className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
+                <span className="text-center">{typedMatch.venue}</span>
               </div>
             )}
           </div>
 
           {/* Countdown Timer */}
           {typedMatch.status === 'upcoming' && !isLocked && (
-            <div className="mt-8 pt-6 border-t border-white/5">
+            <div className="mt-4 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
               <CountdownTimer kickoffTime={typedMatch.kickoff_time} />
             </div>
           )}
@@ -310,7 +310,7 @@ export default async function MatchDetailPage({ params }: PageProps) {
           <>
             {/* Regular User View: Show prediction form only if match is not finished */}
             {typedMatch.status !== 'finished' && (
-              <div className="bg-[#0E0E13] border-2 border-white/5 p-6 md:p-10 rounded shadow-2xl mb-8">
+              <div className="bg-[#0E0E13] border-2 border-white/5 p-4 md:p-6 lg:p-10 rounded shadow-2xl mb-4 md:mb-8">
                 <PredictionForm
                   matchId={typedMatch.id}
                   kickoffTime={typedMatch.kickoff_time}

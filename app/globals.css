@@ -506,14 +506,40 @@
     @apply text-white/50 font-black text-sm;
   }
 
+  /* Match Result Highlighting */
+  .match-result-home-win {
+    border-left: 4px solid #10B981 !important;
+  }
+
+  .match-result-away-win {
+    border-right: 4px solid #10B981 !important;
+  }
+
+  .match-result-draw {
+    border-left: 4px solid #F59E0B !important;
+    border-right: 4px solid #F59E0B !important;
+  }
+
+  .match-result-home-win .match-fixture-team-home .match-fixture-team-name {
+    color: #10B981 !important;
+  }
+
+  .match-result-away-win .match-fixture-team-away .match-fixture-team-name {
+    color: #10B981 !important;
+  }
+
+  .match-result-draw .match-fixture-team-name {
+    color: #F59E0B !important;
+  }
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .match-fixture-content {
-      @apply flex-col gap-4 px-4 py-5;
+      @apply flex-col gap-2 px-3 py-3;
     }
 
     .match-fixture-team {
-      @apply gap-3 flex-row w-full;
+      @apply gap-2 flex-row w-full;
     }
     
     .match-fixture-team-home {
@@ -525,7 +551,7 @@
     }
 
     .match-fixture-team-name {
-      @apply text-sm;
+      @apply text-xs;
       white-space: normal;
       word-break: break-word;
     }
@@ -535,18 +561,18 @@
     }
 
     .match-fixture-flag {
-      width: 40px;
-      height: 28px;
+      width: 32px;
+      height: 22px;
     }
 
     .match-fixture-score {
-      @apply gap-3 px-0 w-full justify-center;
+      @apply gap-2 px-0 w-full justify-center;
     }
 
     .match-fixture-score-box {
-      @apply text-xl;
-      width: 48px;
-      height: 48px;
+      @apply text-lg;
+      width: 40px;
+      height: 40px;
     }
   }
 
