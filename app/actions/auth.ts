@@ -58,10 +58,20 @@ export async function logoutAction() {
   const supabase = await createServerClient()
   const cookieStore = await cookies()
 
-  await supabase.auth.signOut()
-  
-  // Clear the auth token cookie
+  // Clear the auth token cookie immediately for fast perceived logout
   cookieStore.delete('supabase-auth-token')
+
+  // Supabase signOut can sometimes hang or take a long time.
+  // We wrap it in a Promise.race with a 1 second timeout to ensure
+  // the user is not left waiting. Even if it times out, the cookie is deleted.
+  try {
+    await Promise.race([
+      supabase.auth.signOut(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Signout timeout')), 1000))
+    ])
+  } catch (error) {
+    console.warn('Supabase signout timed out or failed, but local session cleared')
+  }
 
   // Revalidate and redirect to landing page
   revalidatePath('/', 'layout')
