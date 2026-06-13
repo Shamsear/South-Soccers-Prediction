@@ -41,8 +41,8 @@ export default async function Home() {
         <div className="text-center">
           
           {/* FIFA World Cup Logo */}
-          <div className="flex justify-center mb-8">
-            <div className="relative w-[200px] h-[260px] md:w-[240px] md:h-[310px]">
+          <div className="flex justify-center -mb-4 md:-mb-8">
+            <div className="relative w-[180px] h-[220px] md:w-[220px] md:h-[280px]">
               <img
                 src="/fifalogo.png"
                 alt="FIFA World Cup 2026"
