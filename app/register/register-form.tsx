@@ -380,9 +380,11 @@ export function RegisterForm() {
           toast.success('Registration successful! Welcome to South Soccers!')
         }
         
-        // Redirect to matches page
-        router.push('/matches')
-        router.refresh()
+        // Small delay to ensure cookies are set
+        setTimeout(() => {
+          router.push('/dashboard')
+          router.refresh()
+        }, 500)
       } catch (error) {
         console.error('Registration error:', error)
         toast.error('An unexpected error occurred. Please try again.')

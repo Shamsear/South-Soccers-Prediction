@@ -32,7 +32,20 @@ export async function loginAction(formData: FormData) {
     return { error: 'Invalid username or password. Please try again.' }
   }
 
+  let redirectUrl = '/dashboard'
+
   if (data.session) {
+    // Check if user is admin
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.session.user.id)
+      .single()
+      
+    if (profile && profile.role === 'admin') {
+      redirectUrl = '/admin'
+    }
+
     // Store the session token in cookies
     const cookieStore = await cookies()
     cookieStore.set('supabase-auth-token', data.session.access_token, {
@@ -46,8 +59,8 @@ export async function loginAction(formData: FormData) {
     revalidatePath('/', 'layout')
   }
 
-  // Redirect to /matches on successful authentication
-  redirect('/matches')
+  // Redirect based on role
+  redirect(redirectUrl)
 }
 
 /**
