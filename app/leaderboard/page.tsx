@@ -94,10 +94,51 @@ export default async function LeaderboardPage() {
 
   const rawLeaderboard = (leaderboard as LeaderboardEntry[]) || []
   
-  // Overwrite scored_count with the total prediction count
-  const typedLeaderboard = rawLeaderboard.map(entry => ({
+  // Fetch all predictions with match details for all users
+  const { data: allUserPredictions } = await adminSupabase
+    .from('predictions')
+    .select(`
+      id,
+      user_id,
+      match_id,
+      predicted_home,
+      predicted_away,
+      points_awarded,
+      created_at,
+      matches (
+        home_team,
+        away_team,
+        home_score,
+        away_score,
+        status
+      )
+    `)
+    .order('created_at', { ascending: false })
+
+  // Group predictions by user_id
+  const predictionsByUser: Record<string, Prediction[]> = {}
+  if (allUserPredictions) {
+    allUserPredictions.forEach((pred: any) => {
+      if (!predictionsByUser[pred.user_id]) {
+        predictionsByUser[pred.user_id] = []
+      }
+      predictionsByUser[pred.user_id].push({
+        id: pred.id,
+        match_id: pred.match_id,
+        predicted_home: pred.predicted_home,
+        predicted_away: pred.predicted_away,
+        points_awarded: pred.points_awarded,
+        created_at: pred.created_at,
+        matches: pred.matches
+      })
+    })
+  }
+  
+  // Overwrite scored_count with the total prediction count and add predictions
+  const typedLeaderboard: LeaderboardEntryWithPredictions[] = rawLeaderboard.map(entry => ({
     ...entry,
-    scored_count: predictionCounts[entry.id] || 0
+    scored_count: predictionCounts[entry.id] || 0,
+    predictions: predictionsByUser[entry.id] || []
   }))
 
   // Calculate stats

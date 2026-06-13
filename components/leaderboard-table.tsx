@@ -6,9 +6,25 @@
  * Client component for displaying leaderboard with search functionality
  */
 
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import Image from 'next/image'
-import { Search, Trophy, Crown, Medal } from 'lucide-react'
+import { Search, Trophy, Crown, Medal, ChevronDown, ChevronUp } from 'lucide-react'
+
+interface Prediction {
+  id: string
+  match_id: string
+  predicted_home: number
+  predicted_away: number
+  points_awarded: number | null
+  created_at: string
+  matches: {
+    home_team: string
+    away_team: string
+    home_score: number | null
+    away_score: number | null
+    status: string
+  }
+}
 
 interface LeaderboardEntry {
   id: string
@@ -19,6 +35,7 @@ interface LeaderboardEntry {
   total_points: number
   correct_predictions: number
   scored_count: number
+  predictions: Prediction[]
 }
 
 interface LeaderboardTableProps {
@@ -28,11 +45,16 @@ interface LeaderboardTableProps {
 
 export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTableProps) {
   const [searchTerm, setSearchTerm] = useState('')
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
 
   const filteredLeaderboard = leaderboard.filter((entry) =>
     entry.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (entry.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
   )
+  
+  const toggleExpand = (userId: string) => {
+    setExpandedUserId(expandedUserId === userId ? null : userId)
+  }
 
   return (
     <div className="bg-[#0E0E13] border-2 border-white/5 rounded-xl shadow-2xl overflow-hidden">
@@ -133,6 +155,62 @@ export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTabl
                       <p className="text-sm font-black text-[#0052B4]">{entry.scored_count}</p>
                     </div>
                   </div>
+                  
+                  {/* Expand/Collapse Button */}
+                  {entry.predictions.length > 0 && (
+                    <button
+                      onClick={() => toggleExpand(entry.id)}
+                      className="w-full mt-2 py-2 border-t border-white/5 flex items-center justify-center gap-2 text-[#F3A81D] hover:text-[#FFD700] transition-colors"
+                    >
+                      <span className="text-xs font-bold uppercase">
+                        {expandedUserId === entry.id ? 'Hide Predictions' : 'View Predictions'}
+                      </span>
+                      {expandedUserId === entry.id ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+                  )}
+                  
+                  {/* Expanded Predictions */}
+                  {expandedUserId === entry.id && entry.predictions.length > 0 && (
+                    <div className="mt-2 pt-2 border-t border-white/5 space-y-1.5 max-h-[300px] overflow-y-auto">
+                      {entry.predictions.map((pred) => (
+                        <div
+                          key={pred.id}
+                          className="bg-black/60 border border-white/5 rounded p-2 text-xs"
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="text-white font-bold text-[10px] truncate flex-1">
+                              {pred.matches.home_team} vs {pred.matches.away_team}
+                            </p>
+                            {pred.matches.status === 'finished' && pred.points_awarded !== null && (
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
+                                pred.points_awarded === 3
+                                  ? 'bg-emerald-950/50 text-emerald-400'
+                                  : pred.points_awarded === 1
+                                  ? 'bg-amber-950/50 text-amber-400'
+                                  : 'bg-rose-950/50 text-rose-400'
+                              }`}>
+                                {pred.points_awarded === 0 ? '0' : `+${pred.points_awarded}`}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="text-[#8A92A6] text-[9px]">
+                              Predicted: <span className="text-white font-bold">{pred.predicted_home} - {pred.predicted_away}</span>
+                            </div>
+                            {pred.matches.status === 'finished' && (
+                              <div className="text-[#8A92A6] text-[9px]">
+                                Actual: <span className="text-[#F3A81D] font-bold">{pred.matches.home_score} - {pred.matches.away_score}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -172,88 +250,147 @@ export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTabl
             {filteredLeaderboard.length > 0 ? (
               filteredLeaderboard.map((entry) => {
                 const isCurrentUser = entry.id === currentUserId
+                const isExpanded = expandedUserId === entry.id
                 
                 return (
-                  <tr
-                    key={entry.id}
-                    className={`border-b border-white/5 transition-all hover:bg-white/[0.02] ${
-                      isCurrentUser ? 'bg-[#F3A81D]/5 border-l-4 border-l-[#F3A81D]' : ''
-                    }`}
-                  >
-                    {/* Rank */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {entry.rank === 1 && <Crown className="w-5 h-5 text-[#F3A81D]" />}
-                        {entry.rank === 2 && <Medal className="w-5 h-5 text-[#C0C0C0]" />}
-                        {entry.rank === 3 && <Medal className="w-5 h-5 text-[#CD7F32]" />}
-                        <span className={`text-lg font-black ${
-                          entry.rank === 1 ? 'text-[#F3A81D]' :
-                          entry.rank === 2 ? 'text-[#C0C0C0]' :
-                          entry.rank === 3 ? 'text-[#CD7F32]' :
-                          'text-[#8A92A6]'
-                        }`}>
-                          #{entry.rank}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Player */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg border-2 border-white/10 bg-black/30 flex items-center justify-center overflow-hidden flex-shrink-0">
-                          {entry.avatar_url ? (
-                            <Image
-                              src={entry.avatar_url}
-                              alt={entry.username}
-                              width={48}
-                              height={48}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span className="text-lg font-black text-[#F3A81D]">
-                              {entry.username[0].toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <p className={`text-sm font-black uppercase tracking-wide ${
-                            isCurrentUser ? 'text-[#F3A81D]' : 'text-white'
+                  <Fragment key={entry.id}>
+                    <tr
+                      className={`border-b border-white/5 transition-all hover:bg-white/[0.02] ${
+                        isCurrentUser ? 'bg-[#F3A81D]/5 border-l-4 border-l-[#F3A81D]' : ''
+                      }`}
+                    >
+                      {/* Rank */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          {entry.rank === 1 && <Crown className="w-5 h-5 text-[#F3A81D]" />}
+                          {entry.rank === 2 && <Medal className="w-5 h-5 text-[#C0C0C0]" />}
+                          {entry.rank === 3 && <Medal className="w-5 h-5 text-[#CD7F32]" />}
+                          <span className={`text-lg font-black ${
+                            entry.rank === 1 ? 'text-[#F3A81D]' :
+                            entry.rank === 2 ? 'text-[#C0C0C0]' :
+                            entry.rank === 3 ? 'text-[#CD7F32]' :
+                            'text-[#8A92A6]'
                           }`}>
-                            {entry.username}
-                            {isCurrentUser && (
-                              <span className="ml-2 text-[10px] text-[#F3A81D] font-normal">(You)</span>
-                            )}
-                          </p>
-                          {entry.full_name && (
-                            <p className="text-xs text-[#8A92A6] font-medium">
-                              {entry.full_name}
-                            </p>
+                            #{entry.rank}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Player */}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-lg border-2 border-white/10 bg-black/30 flex items-center justify-center overflow-hidden flex-shrink-0">
+                              {entry.avatar_url ? (
+                                <Image
+                                  src={entry.avatar_url}
+                                  alt={entry.username}
+                                  width={48}
+                                  height={48}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-lg font-black text-[#F3A81D]">
+                                  {entry.username[0].toUpperCase()}
+                                </span>
+                              )}
+                            </div>
+                            <div>
+                              <p className={`text-sm font-black uppercase tracking-wide ${
+                                isCurrentUser ? 'text-[#F3A81D]' : 'text-white'
+                              }`}>
+                                {entry.username}
+                                {isCurrentUser && (
+                                  <span className="ml-2 text-[10px] text-[#F3A81D] font-normal">(You)</span>
+                                )}
+                              </p>
+                              {entry.full_name && (
+                                <p className="text-xs text-[#8A92A6] font-medium">
+                                  {entry.full_name}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          {entry.predictions.length > 0 && (
+                            <button
+                              onClick={() => toggleExpand(entry.id)}
+                              className="ml-4 p-1 text-[#F3A81D] hover:text-[#FFD700] transition-colors"
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="w-5 h-5" />
+                              ) : (
+                                <ChevronDown className="w-5 h-5" />
+                              )}
+                            </button>
                           )}
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Points */}
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-xl font-black text-[#F3A81D]">
-                        {entry.total_points}
-                      </span>
-                    </td>
+                      {/* Points */}
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-xl font-black text-[#F3A81D]">
+                          {entry.total_points}
+                        </span>
+                      </td>
 
-                    {/* Exact Scores */}
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-lg font-black text-[#009A44]">
-                        {entry.correct_predictions}
-                      </span>
-                    </td>
+                      {/* Exact Scores */}
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-lg font-black text-[#009A44]">
+                          {entry.correct_predictions}
+                        </span>
+                      </td>
 
-                    {/* Predictions */}
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-lg font-black text-[#0052B4]">
-                        {entry.scored_count}
-                      </span>
-                    </td>
-                  </tr>
+                      {/* Predictions */}
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-lg font-black text-[#0052B4]">
+                          {entry.scored_count}
+                        </span>
+                      </td>
+                    </tr>
+                    
+                    {/* Expanded Predictions Row */}
+                    {isExpanded && entry.predictions.length > 0 && (
+                      <tr className={isCurrentUser ? 'bg-[#F3A81D]/5 border-l-4 border-l-[#F3A81D]' : ''}>
+                        <td colSpan={5} className="px-6 py-4 bg-black/40">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[400px] overflow-y-auto">
+                            {entry.predictions.map((pred) => (
+                              <div
+                                key={pred.id}
+                                className="bg-black/60 border border-white/5 rounded-lg p-3"
+                              >
+                                <div className="flex items-start justify-between mb-2">
+                                  <p className="text-white font-bold text-sm flex-1 leading-tight">
+                                    {pred.matches.home_team} vs {pred.matches.away_team}
+                                  </p>
+                                  {pred.matches.status === 'finished' && pred.points_awarded !== null && (
+                                    <span className={`ml-2 px-2 py-1 rounded text-xs font-black flex-shrink-0 ${
+                                      pred.points_awarded === 3
+                                        ? 'bg-emerald-950/50 text-emerald-400'
+                                        : pred.points_awarded === 1
+                                        ? 'bg-amber-950/50 text-amber-400'
+                                        : 'bg-rose-950/50 text-rose-400'
+                                    }`}>
+                                      {pred.points_awarded === 0 ? '0' : `+${pred.points_awarded}`}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="text-[#8A92A6] text-xs">
+                                    Predicted: <span className="text-white font-bold">{pred.predicted_home} - {pred.predicted_away}</span>
+                                  </div>
+                                  {pred.matches.status === 'finished' && (
+                                    <div className="text-[#8A92A6] text-xs">
+                                      Actual: <span className="text-[#F3A81D] font-bold">{pred.matches.home_score} - {pred.matches.away_score}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 )
               })
             ) : (

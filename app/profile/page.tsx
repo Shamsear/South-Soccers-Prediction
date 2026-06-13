@@ -64,27 +64,27 @@ export default async function ProfilePage() {
       <div className="absolute top-[-5%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#F3A81D]/6 blur-[150px] pointer-events-none animate-float-slow" />
       <div className="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#0052B4]/6 blur-[150px] pointer-events-none animate-float-medium" />
 
-      <div className="container mx-auto px-4 py-12 max-w-5xl relative z-10">
+      <div className="container mx-auto px-3 md:px-4 py-6 md:py-12 max-w-5xl relative z-10">
         
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-6 md:mb-12">
           <Link
             href={isAdmin ? "/admin" : "/matches"}
-            className="inline-flex items-center gap-2 text-[#C1C5D0] hover:text-[#F3A81D] font-bold mb-6 transition-colors group"
+            className="inline-flex items-center gap-1.5 md:gap-2 text-[#C1C5D0] hover:text-[#F3A81D] font-bold mb-4 md:mb-6 transition-colors group text-xs md:text-sm"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-3 h-3 md:w-4 md:h-4 group-hover:-translate-x-1 transition-transform" />
             Back to {isAdmin ? "Admin Home" : "Matches"}
           </Link>
 
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#F3A81D] to-[#D80027] flex items-center justify-center">
-              <User className="w-7 h-7 text-white" />
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-[#F3A81D] to-[#D80027] flex items-center justify-center flex-shrink-0">
+              <User className="w-5 h-5 md:w-7 md:h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F3A81D] to-white uppercase tracking-tight">
+              <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-[#F3A81D] to-white uppercase tracking-tight">
                 Profile Settings
               </h1>
-              <p className="text-[#C1C5D0] text-sm mt-1">
+              <p className="text-[#C1C5D0] text-xs md:text-sm mt-0.5 md:mt-1">
                 Manage your account information and preferences
               </p>
             </div>
@@ -92,118 +92,118 @@ export default async function ProfilePage() {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        <div className="grid grid-cols-2 gap-2 md:gap-4 mb-6 md:mb-12">
           {/* Points Card */}
-          <div className="bg-[#0E0E13] border border-white/5 p-5 rounded-xl hover:border-[#F3A81D]/40 transition-all group relative overflow-hidden">
+          <div className="bg-[#0E0E13] border border-white/5 p-3 md:p-5 rounded-xl hover:border-[#F3A81D]/40 transition-all group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#F3A81D] via-[#F3A81D]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-r-xl" />
-            <div className="w-10 h-10 rounded-lg bg-[#F3A81D]/10 flex items-center justify-center mb-3 border border-[#F3A81D]/20">
-              <Trophy className="w-5 h-5 text-[#F3A81D]" />
+            <div className="w-7 h-7 md:w-10 md:h-10 rounded-lg bg-[#F3A81D]/10 flex items-center justify-center mb-2 md:mb-3 border border-[#F3A81D]/20">
+              <Trophy className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#F3A81D]" />
             </div>
-            <p className="text-xs font-black text-[#8A92A6] mb-1 uppercase tracking-wider">Total Points</p>
-            <p className="text-3xl font-black text-white">{typedProfile.total_points}</p>
+            <p className="text-[8px] md:text-xs font-black text-[#8A92A6] mb-0.5 md:mb-1 uppercase tracking-wider">Points</p>
+            <p className="text-xl md:text-3xl font-black text-white">{typedProfile.total_points}</p>
           </div>
           
           {/* Exact Scores */}
-          <div className="bg-[#0E0E13] border border-white/5 p-5 rounded-xl hover:border-[#009A44]/40 transition-all group relative overflow-hidden">
+          <div className="bg-[#0E0E13] border border-white/5 p-3 md:p-5 rounded-xl hover:border-[#009A44]/40 transition-all group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#009A44] via-[#009A44]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-r-xl" />
-            <div className="w-10 h-10 rounded-lg bg-[#009A44]/10 flex items-center justify-center mb-3 border border-[#009A44]/20">
-              <Target className="w-5 h-5 text-[#009A44]" />
+            <div className="w-7 h-7 md:w-10 md:h-10 rounded-lg bg-[#009A44]/10 flex items-center justify-center mb-2 md:mb-3 border border-[#009A44]/20">
+              <Target className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#009A44]" />
             </div>
-            <p className="text-xs font-black text-[#8A92A6] mb-1 uppercase tracking-wider">Exact Scores</p>
-            <p className="text-3xl font-black text-white">{typedProfile.correct_predictions}</p>
+            <p className="text-[8px] md:text-xs font-black text-[#8A92A6] mb-0.5 md:mb-1 uppercase tracking-wider">Exact</p>
+            <p className="text-xl md:text-3xl font-black text-white">{typedProfile.correct_predictions}</p>
           </div>
           
           {/* Role */}
-          <div className="bg-[#0E0E13] border border-white/5 p-5 rounded-xl hover:border-[#0052B4]/40 transition-all group relative overflow-hidden">
+          <div className="bg-[#0E0E13] border border-white/5 p-3 md:p-5 rounded-xl hover:border-[#0052B4]/40 transition-all group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#0052B4] via-[#0052B4]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-r-xl" />
-            <div className="w-10 h-10 rounded-lg bg-[#0052B4]/10 flex items-center justify-center mb-3 border border-[#0052B4]/20">
-              <Shield className="w-5 h-5 text-[#0052B4]" />
+            <div className="w-7 h-7 md:w-10 md:h-10 rounded-lg bg-[#0052B4]/10 flex items-center justify-center mb-2 md:mb-3 border border-[#0052B4]/20">
+              <Shield className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#0052B4]" />
             </div>
-            <p className="text-xs font-black text-[#8A92A6] mb-1 uppercase tracking-wider">Role</p>
-            <p className="text-lg font-black text-white uppercase">
-              {isAdmin ? 'Administrator' : 'Player'}
+            <p className="text-[8px] md:text-xs font-black text-[#8A92A6] mb-0.5 md:mb-1 uppercase tracking-wider">Role</p>
+            <p className="text-sm md:text-lg font-black text-white uppercase">
+              {isAdmin ? 'Admin' : 'Player'}
             </p>
           </div>
           
           {/* Notifications */}
-          <div className="bg-[#0E0E13] border border-white/5 p-5 rounded-xl hover:border-[#D80027]/40 transition-all group relative overflow-hidden">
+          <div className="bg-[#0E0E13] border border-white/5 p-3 md:p-5 rounded-xl hover:border-[#D80027]/40 transition-all group relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-[#D80027] via-[#D80027]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-r-xl" />
-            <div className="w-10 h-10 rounded-lg bg-[#D80027]/10 flex items-center justify-center mb-3 border border-[#D80027]/20">
-              <Bell className="w-5 h-5 text-[#D80027]" />
+            <div className="w-7 h-7 md:w-10 md:h-10 rounded-lg bg-[#D80027]/10 flex items-center justify-center mb-2 md:mb-3 border border-[#D80027]/20">
+              <Bell className="w-3.5 h-3.5 md:w-5 md:h-5 text-[#D80027]" />
             </div>
-            <p className="text-xs font-black text-[#8A92A6] mb-1 uppercase tracking-wider">Email Alerts</p>
-            <p className="text-lg font-black text-white uppercase">
-              {typedProfile.email_notifications_enabled ? 'Active' : 'Muted'}
+            <p className="text-[8px] md:text-xs font-black text-[#8A92A6] mb-0.5 md:mb-1 uppercase tracking-wider">Alerts</p>
+            <p className="text-sm md:text-lg font-black text-white uppercase">
+              {typedProfile.email_notifications_enabled ? 'On' : 'Off'}
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           
           {/* Left Column - Personal Info */}
           <div className="lg:col-span-1">
-            <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-6 sticky top-24">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#F3A81D]/10 flex items-center justify-center border border-[#F3A81D]/20">
-                  <User className="w-5 h-5 text-[#F3A81D]" />
+            <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-4 md:p-6 lg:sticky lg:top-24">
+              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-[#F3A81D]/10 flex items-center justify-center border border-[#F3A81D]/20">
+                  <User className="w-4 h-4 md:w-5 md:h-5 text-[#F3A81D]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-white uppercase tracking-wide">
+                  <h3 className="text-sm md:text-base font-black text-white uppercase tracking-wide">
                     Account Info
                   </h3>
-                  <p className="text-xs text-[#8A92A6]">Your personal details</p>
+                  <p className="text-[10px] md:text-xs text-[#8A92A6]">Your personal details</p>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {/* Username */}
-                <div className="bg-black/30 border border-white/5 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <User className="w-4 h-4 text-[#8A92A6]" />
-                    <p className="text-xs font-black text-[#8A92A6] uppercase tracking-wider">Username</p>
+                <div className="bg-black/30 border border-white/5 p-3 md:p-4 rounded-lg">
+                  <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+                    <User className="w-3 h-3 md:w-4 md:h-4 text-[#8A92A6]" />
+                    <p className="text-[10px] md:text-xs font-black text-[#8A92A6] uppercase tracking-wider">Username</p>
                   </div>
-                  <p className="text-sm font-bold text-white uppercase">{typedProfile.username}</p>
+                  <p className="text-xs md:text-sm font-bold text-white uppercase">{typedProfile.username}</p>
                 </div>
 
                 {/* Email */}
-                <div className="bg-black/30 border border-white/5 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Mail className="w-4 h-4 text-[#8A92A6]" />
-                    <p className="text-xs font-black text-[#8A92A6] uppercase tracking-wider">Email</p>
+                <div className="bg-black/30 border border-white/5 p-3 md:p-4 rounded-lg">
+                  <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+                    <Mail className="w-3 h-3 md:w-4 md:h-4 text-[#8A92A6]" />
+                    <p className="text-[10px] md:text-xs font-black text-[#8A92A6] uppercase tracking-wider">Email</p>
                   </div>
-                  <p className="text-sm font-bold text-white break-all">{user.email}</p>
+                  <p className="text-xs md:text-sm font-bold text-white break-all">{user.email}</p>
                 </div>
 
                 {/* Full Name */}
                 {typedProfile.full_name && (
-                  <div className="bg-black/30 border border-white/5 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Award className="w-4 h-4 text-[#8A92A6]" />
-                      <p className="text-xs font-black text-[#8A92A6] uppercase tracking-wider">Full Name</p>
+                  <div className="bg-black/30 border border-white/5 p-3 md:p-4 rounded-lg">
+                    <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+                      <Award className="w-3 h-3 md:w-4 md:h-4 text-[#8A92A6]" />
+                      <p className="text-[10px] md:text-xs font-black text-[#8A92A6] uppercase tracking-wider">Full Name</p>
                     </div>
-                    <p className="text-sm font-bold text-white">{typedProfile.full_name}</p>
+                    <p className="text-xs md:text-sm font-bold text-white">{typedProfile.full_name}</p>
                   </div>
                 )}
 
                 {/* Phone */}
                 {typedProfile.phone_number && (
-                  <div className="bg-black/30 border border-white/5 p-4 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Phone className="w-4 h-4 text-[#8A92A6]" />
-                      <p className="text-xs font-black text-[#8A92A6] uppercase tracking-wider">Phone</p>
+                  <div className="bg-black/30 border border-white/5 p-3 md:p-4 rounded-lg">
+                    <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+                      <Phone className="w-3 h-3 md:w-4 md:h-4 text-[#8A92A6]" />
+                      <p className="text-[10px] md:text-xs font-black text-[#8A92A6] uppercase tracking-wider">Phone</p>
                     </div>
-                    <p className="text-sm font-bold text-white">{typedProfile.phone_number}</p>
+                    <p className="text-xs md:text-sm font-bold text-white">{typedProfile.phone_number}</p>
                   </div>
                 )}
 
                 {/* Admin Badge */}
                 {isAdmin && (
-                  <div className="bg-gradient-to-br from-[#D80027]/10 to-[#D80027]/5 border border-[#D80027]/30 p-4 rounded-lg">
+                  <div className="bg-gradient-to-br from-[#D80027]/10 to-[#D80027]/5 border border-[#D80027]/30 p-3 md:p-4 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-[#D80027]" />
+                      <Shield className="w-4 h-4 md:w-5 md:h-5 text-[#D80027]" />
                       <div>
-                        <p className="text-xs font-black text-[#D80027] uppercase tracking-wider">Administrator</p>
-                        <p className="text-xs text-[#8A92A6] mt-0.5">Full system access</p>
+                        <p className="text-[10px] md:text-xs font-black text-[#D80027] uppercase tracking-wider">Administrator</p>
+                        <p className="text-[10px] md:text-xs text-[#8A92A6] mt-0.5">Full system access</p>
                       </div>
                     </div>
                   </div>
@@ -214,16 +214,16 @@ export default async function ProfilePage() {
 
           {/* Right Column - Edit Form */}
           <div className="lg:col-span-2">
-            <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-[#0052B4]/10 flex items-center justify-center border border-[#0052B4]/20">
-                  <Target className="w-5 h-5 text-[#0052B4]" />
+            <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-4 md:p-6">
+              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-[#0052B4]/10 flex items-center justify-center border border-[#0052B4]/20">
+                  <Target className="w-4 h-4 md:w-5 md:h-5 text-[#0052B4]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-white uppercase tracking-wide">
+                  <h3 className="text-sm md:text-base font-black text-white uppercase tracking-wide">
                     Edit Profile
                   </h3>
-                  <p className="text-xs text-[#8A92A6]">Update your information and settings</p>
+                  <p className="text-[10px] md:text-xs text-[#8A92A6]">Update your information and settings</p>
                 </div>
               </div>
 
@@ -234,37 +234,37 @@ export default async function ProfilePage() {
 
         {/* Quick Actions */}
         {!isAdmin && (
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-6 md:mt-12 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
             <Link href="/all-predictions" className="group">
-              <div className="bg-[#0E0E13] border-2 border-white/5 hover:border-[#F3A81D]/50 p-6 rounded-xl transition-all card-hover-lift">
+              <div className="bg-[#0E0E13] border-2 border-white/5 hover:border-[#F3A81D]/50 p-4 md:p-6 rounded-xl transition-all card-hover-lift">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-[#F3A81D]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Award className="w-6 h-6 text-[#F3A81D]" />
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#F3A81D]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Award className="w-5 h-5 md:w-6 md:h-6 text-[#F3A81D]" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-black text-white uppercase">All Predictions</h4>
-                      <p className="text-xs text-[#8A92A6]">View all match predictions</p>
+                      <h4 className="text-sm md:text-lg font-black text-white uppercase">All Predictions</h4>
+                      <p className="text-[10px] md:text-xs text-[#8A92A6]">View all match predictions</p>
                     </div>
                   </div>
-                  <ArrowLeft className="w-5 h-5 text-[#F3A81D] rotate-180 group-hover:translate-x-1 transition-transform" />
+                  <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-[#F3A81D] rotate-180 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </Link>
 
             <Link href="/leaderboard" className="group">
-              <div className="bg-[#0E0E13] border-2 border-white/5 hover:border-[#009A44]/50 p-6 rounded-xl transition-all card-hover-lift">
+              <div className="bg-[#0E0E13] border-2 border-white/5 hover:border-[#009A44]/50 p-4 md:p-6 rounded-xl transition-all card-hover-lift">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-[#009A44]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Trophy className="w-6 h-6 text-[#009A44]" />
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#009A44]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Trophy className="w-5 h-5 md:w-6 md:h-6 text-[#009A44]" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-black text-white uppercase">Leaderboard</h4>
-                      <p className="text-xs text-[#8A92A6]">Check your ranking</p>
+                      <h4 className="text-sm md:text-lg font-black text-white uppercase">Leaderboard</h4>
+                      <p className="text-[10px] md:text-xs text-[#8A92A6]">Check your ranking</p>
                     </div>
                   </div>
-                  <ArrowLeft className="w-5 h-5 text-[#009A44] rotate-180 group-hover:translate-x-1 transition-transform" />
+                  <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-[#009A44] rotate-180 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </Link>

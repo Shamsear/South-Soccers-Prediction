@@ -87,64 +87,64 @@ export default async function DashboardPage() {
       <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
       <div className="absolute top-[-5%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#F3A81D]/6 blur-[150px] pointer-events-none animate-float-slow" />
 
-      <div className="container mx-auto px-4 py-8 md:py-12 max-w-7xl relative z-10">
+      <div className="container mx-auto px-3 md:px-4 py-6 md:py-8 lg:py-12 max-w-7xl relative z-10">
         
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-2">
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mb-1 md:mb-2">
             Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F3A81D] to-[#D80027]">{profile?.username}</span>
           </h1>
-          <p className="text-[#8A92A6] text-sm">Your prediction command center</p>
+          <p className="text-[#8A92A6] text-xs md:text-sm">Your prediction command center</p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 gap-2 md:gap-4 mb-4 md:mb-8">
           
           {/* Total Points */}
-          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#F3A81D]/40 transition-colors">
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-3 md:p-5 relative overflow-hidden group hover:border-[#F3A81D]/40 transition-colors">
             <div className="absolute top-0 right-0 w-20 h-20 bg-[#F3A81D]/5 rounded-full blur-2xl" />
             <div className="relative">
-              <div className="flex items-center gap-2 mb-2">
-                <Trophy className="w-4 h-4 text-[#F3A81D]" />
-                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Points</p>
+              <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
+                <Trophy className="w-3 h-3 md:w-4 md:h-4 text-[#F3A81D]" />
+                <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Points</p>
               </div>
-              <p className="text-3xl font-black text-white">{totalPoints}</p>
+              <p className="text-xl md:text-3xl font-black text-white">{totalPoints}</p>
             </div>
           </div>
 
           {/* Rank */}
-          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#0052B4]/40 transition-colors">
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-3 md:p-5 relative overflow-hidden group hover:border-[#0052B4]/40 transition-colors">
             <div className="absolute top-0 right-0 w-20 h-20 bg-[#0052B4]/5 rounded-full blur-2xl" />
             <div className="relative">
-              <div className="flex items-center gap-2 mb-2">
-                <Medal className="w-4 h-4 text-[#0052B4]" />
-                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Rank</p>
+              <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
+                <Medal className="w-3 h-3 md:w-4 md:h-4 text-[#0052B4]" />
+                <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Rank</p>
               </div>
-              <p className="text-3xl font-black text-white">#{rank}</p>
+              <p className="text-xl md:text-3xl font-black text-white">#{rank}</p>
             </div>
           </div>
 
           {/* Exact Predictions */}
-          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#10B981]/40 transition-colors">
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-3 md:p-5 relative overflow-hidden group hover:border-[#10B981]/40 transition-colors">
             <div className="absolute top-0 right-0 w-20 h-20 bg-[#10B981]/5 rounded-full blur-2xl" />
             <div className="relative">
-              <div className="flex items-center gap-2 mb-2">
-                <Target className="w-4 h-4 text-[#10B981]" />
-                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Exact</p>
+              <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
+                <Target className="w-3 h-3 md:w-4 md:h-4 text-[#10B981]" />
+                <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Exact</p>
               </div>
-              <p className="text-3xl font-black text-white">{correctPredictions}</p>
+              <p className="text-xl md:text-3xl font-black text-white">{correctPredictions}</p>
             </div>
           </div>
 
           {/* Total Predictions */}
-          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-5 relative overflow-hidden group hover:border-[#D80027]/40 transition-colors">
+          <div className="bg-[#0E0E13] border border-white/5 rounded-xl p-3 md:p-5 relative overflow-hidden group hover:border-[#D80027]/40 transition-colors">
             <div className="absolute top-0 right-0 w-20 h-20 bg-[#D80027]/5 rounded-full blur-2xl" />
             <div className="relative">
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="w-4 h-4 text-[#D80027]" />
-                <p className="text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Predictions</p>
+              <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2">
+                <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-[#D80027]" />
+                <p className="text-[8px] md:text-[10px] font-black text-[#8A92A6] uppercase tracking-wider">Total</p>
               </div>
-              <p className="text-3xl font-black text-white">{totalPredictions}</p>
+              <p className="text-xl md:text-3xl font-black text-white">{totalPredictions}</p>
             </div>
           </div>
         </div>
