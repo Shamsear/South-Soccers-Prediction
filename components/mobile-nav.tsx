@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Calendar, Trophy, User, Home, LogIn, Award, Shield, Users, Target } from 'lucide-react'
+import { Calendar, Trophy, User, Home, LogIn, Award, Shield, Users, Target, LogOut } from 'lucide-react'
+import { LogoutButton } from './logout-button'
 
 interface MobileNavProps {
   user: any
