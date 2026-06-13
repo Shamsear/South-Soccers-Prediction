@@ -41,7 +41,7 @@ export function MobileNav({ user, profile, isAdmin }: MobileNavProps) {
           /* Authenticated Mobile Bottom Nav */
           <>
             {isAdmin ? (
-              /* Admin Mobile Nav - 5 items */
+              /* Admin Mobile Nav - 6 items with logout */
               <>
                 <Link
                   href="/admin"
@@ -82,9 +82,13 @@ export function MobileNav({ user, profile, isAdmin }: MobileNavProps) {
                   <Trophy className="w-[18px] h-[18px]" />
                   <span>Board</span>
                 </Link>
+
+                <div className="mobile-bottom-nav-item">
+                  <LogoutButton variant="mobile" />
+                </div>
               </>
             ) : (
-              /* Regular User Mobile Nav - 5 items */
+              /* Regular User Mobile Nav - 5 items with logout */
               <>
                 <Link
                   href="/dashboard"
@@ -118,13 +122,9 @@ export function MobileNav({ user, profile, isAdmin }: MobileNavProps) {
                   <span>Board</span>
                 </Link>
 
-                <Link
-                  href="/profile"
-                  className={`mobile-bottom-nav-item ${isActive('/profile') ? 'active' : ''}`}
-                >
-                  <User className="w-[18px] h-[18px]" />
-                  <span>Profile</span>
-                </Link>
+                <div className="mobile-bottom-nav-item">
+                  <LogoutButton variant="mobile" />
+                </div>
               </>
             )}
           </>

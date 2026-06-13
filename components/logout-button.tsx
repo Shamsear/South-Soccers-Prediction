@@ -17,7 +17,7 @@ import { toast } from 'sonner'
 import { LogOut } from 'lucide-react'
 
 interface LogoutButtonProps {
-  variant?: 'default' | 'dropdown'
+  variant?: 'default' | 'dropdown' | 'mobile'
 }
 
 export function LogoutButton({ variant = 'default' }: LogoutButtonProps) {
@@ -56,6 +56,21 @@ export function LogoutButton({ variant = 'default' }: LogoutButtonProps) {
           <LogOut className="w-4 h-4 text-[#D80027]" />
         </div>
         <span>{isPending ? 'Logging out...' : 'Logout'}</span>
+      </button>
+    )
+  }
+
+  if (variant === 'mobile') {
+    return (
+      <button
+        onClick={handleLogout}
+        disabled={isPending}
+        className="flex flex-col items-center justify-center gap-0.5 w-full h-full text-[#D80027] disabled:opacity-50"
+      >
+        <LogOut className="w-[18px] h-[18px]" />
+        <span className="text-[10px] font-semibold">
+          {isPending ? 'Wait...' : 'Logout'}
+        </span>
       </button>
     )
   }
