@@ -131,9 +131,9 @@ export async function FooterContent() {
                   <span className="text-[#F3A81D] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                   <span>View All Matches</span>
                 </Link>
-                <Link href="/my-predictions" className="text-[#C1C5D0] hover:text-[#F3A81D] transition-colors flex items-center gap-2 group">
+                <Link href="/all-predictions" className="text-[#C1C5D0] hover:text-[#F3A81D] transition-colors flex items-center gap-2 group">
                   <span className="text-[#F3A81D] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                  <span>My Predictions</span>
+                  <span>All Predictions</span>
                 </Link>
                 <Link href="/leaderboard" className="text-[#C1C5D0] hover:text-[#F3A81D] transition-colors flex items-center gap-2 group">
                   <span className="text-[#F3A81D] opacity-0 group-hover:opacity-100 transition-opacity">→</span>

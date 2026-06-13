@@ -125,7 +125,7 @@ export async function submitBulkPredictions(
 
     // Revalidate affected pages
     revalidatePath('/matches')
-    revalidatePath('/my-predictions')
+    revalidatePath('/all-predictions')
 
     return {
       success: successCount > 0,

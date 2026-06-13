@@ -374,7 +374,7 @@ export async function importPrediction(data: {
     revalidatePath('/admin/import-predictions')
     revalidatePath('/leaderboard')
     revalidatePath(`/matches/${matchId}`)
-    revalidatePath('/my-predictions')
+    revalidatePath('/all-predictions')
 
     const message = predictionData.points_awarded !== undefined
       ? `Prediction imported with ${predictionData.points_awarded} points!`

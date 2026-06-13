@@ -180,8 +180,8 @@ export default async function DashboardPage() {
             </div>
           </Link>
 
-          {/* My Predictions */}
-          <Link href="/my-predictions">
+          {/* All Predictions */}
+          <Link href="/all-predictions">
             <div className="bg-gradient-to-br from-[#10B981]/10 to-[#059669]/10 border border-[#10B981]/20 rounded-xl p-6 hover:border-[#10B981]/50 transition-all group cursor-pointer">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -189,8 +189,8 @@ export default async function DashboardPage() {
                 </div>
                 <ChevronRight className="w-5 h-5 text-[#10B981] group-hover:translate-x-1 transition-transform" />
               </div>
-              <h3 className="text-lg font-black text-white uppercase mb-1">My Predictions</h3>
-              <p className="text-sm text-[#8A92A6]">Review your picks</p>
+              <h3 className="text-lg font-black text-white uppercase mb-1">All Predictions</h3>
+              <p className="text-sm text-[#8A92A6]">View community picks</p>
             </div>
           </Link>
         </div>
@@ -250,7 +250,7 @@ export default async function DashboardPage() {
                 <Award className="w-5 h-5 text-[#0052B4]" />
                 <h2 className="text-lg font-black text-white uppercase">Recent Predictions</h2>
               </div>
-              <Link href="/my-predictions" className="text-xs font-bold text-[#0052B4] hover:text-[#0066CC] transition-colors">
+              <Link href="/all-predictions" className="text-xs font-bold text-[#0052B4] hover:text-[#0066CC] transition-colors">
                 View All
               </Link>
             </div>

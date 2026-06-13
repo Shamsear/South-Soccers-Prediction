@@ -162,9 +162,9 @@ export function NavLinks({ isAdmin }: NavLinksProps) {
           </NavLink>
           
           <NavLink 
-            href="/my-predictions" 
+            href="/all-predictions" 
             icon={<Award className="w-4 h-4" />}
-            active={isActive('/my-predictions')}
+            active={isActive('/all-predictions')}
           >
             All Predictions
           </NavLink>

@@ -101,7 +101,7 @@ export async function submitPrediction(
     // Revalidate affected pages
     revalidatePath(`/matches/${matchId}`)
     revalidatePath('/matches')
-    revalidatePath('/my-predictions')
+    revalidatePath('/all-predictions')
 
     // Return success response for client toast display
     return {

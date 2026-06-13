@@ -102,8 +102,8 @@ export function MobileNav({ user, profile, isAdmin }: MobileNavProps) {
                 </Link>
 
                 <Link
-                  href="/my-predictions"
-                  className={`mobile-bottom-nav-item ${isActive('/my-predictions') ? 'active' : ''}`}
+                  href="/all-predictions"
+                  className={`mobile-bottom-nav-item ${isActive('/all-predictions') ? 'active' : ''}`}
                 >
                   <Award className="w-[18px] h-[18px]" />
                   <span>Predicts</span>

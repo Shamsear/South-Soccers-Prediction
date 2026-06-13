@@ -235,7 +235,7 @@ export default async function ProfilePage() {
         {/* Quick Actions */}
         {!isAdmin && (
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link href="/my-predictions" className="group">
+            <Link href="/all-predictions" className="group">
               <div className="bg-[#0E0E13] border-2 border-white/5 hover:border-[#F3A81D]/50 p-6 rounded-xl transition-all card-hover-lift">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -243,8 +243,8 @@ export default async function ProfilePage() {
                       <Award className="w-6 h-6 text-[#F3A81D]" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-black text-white uppercase">My Predictions</h4>
-                      <p className="text-xs text-[#8A92A6]">View your prediction history</p>
+                      <h4 className="text-lg font-black text-white uppercase">All Predictions</h4>
+                      <p className="text-xs text-[#8A92A6]">View all match predictions</p>
                     </div>
                   </div>
                   <ArrowLeft className="w-5 h-5 text-[#F3A81D] rotate-180 group-hover:translate-x-1 transition-transform" />
