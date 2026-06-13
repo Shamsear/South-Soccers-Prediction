@@ -3,7 +3,6 @@
 import { createServerClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 
 /**
  * Server action for user login with username and password
@@ -12,6 +11,7 @@ import { cookies } from 'next/headers'
 export async function loginAction(formData: FormData) {
   const username = formData.get('username') as string
   const password = formData.get('password') as string
+  const rememberMe = formData.get('rememberMe') === 'true'
 
   if (!username || !password) {
     return { error: 'Username and password are required' }
@@ -23,6 +23,9 @@ export async function loginAction(formData: FormData) {
   const supabase = await createServerClient()
 
   // Call Supabase Auth signInWithPassword using the generated email
+  // The session will be automatically stored in cookies by @supabase/ssr
+  // Session duration is configured in Supabase project settings (default 7 days)
+  // The middleware will refresh the session automatically to keep users logged in
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -46,15 +49,6 @@ export async function loginAction(formData: FormData) {
       redirectUrl = '/admin'
     }
 
-    // Store the session token in cookies
-    const cookieStore = await cookies()
-    cookieStore.set('supabase-auth-token', data.session.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
-
     // Revalidate paths that depend on auth state
     revalidatePath('/', 'layout')
   }
@@ -69,22 +63,9 @@ export async function loginAction(formData: FormData) {
  */
 export async function logoutAction() {
   const supabase = await createServerClient()
-  const cookieStore = await cookies()
 
-  // Clear the auth token cookie immediately for fast perceived logout
-  cookieStore.delete('supabase-auth-token')
-
-  // Supabase signOut can sometimes hang or take a long time.
-  // We wrap it in a Promise.race with a 1 second timeout to ensure
-  // the user is not left waiting. Even if it times out, the cookie is deleted.
-  try {
-    await Promise.race([
-      supabase.auth.signOut(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Signout timeout')), 1000))
-    ])
-  } catch (error) {
-    console.warn('Supabase signout timed out or failed, but local session cleared')
-  }
+  // Sign out using Supabase - this will clear all session cookies
+  await supabase.auth.signOut()
 
   // Revalidate and redirect to landing page
   revalidatePath('/', 'layout')

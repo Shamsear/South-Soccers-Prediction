@@ -9,6 +9,7 @@
  * These clients run on the server and have access to cookies for authentication.
  */
 
+import { createServerClient as createSSRClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import type { Database } from '@/types/database'
@@ -42,26 +43,29 @@ import type { Database } from '@/types/database'
  */
 export async function createServerClient() {
   const cookieStore = await cookies()
-  
-  // Get auth token from cookies if it exists
-  const authCookie = cookieStore.get('supabase-auth-token')
-  
-  const client = createClient<Database>(
+
+  return createSSRClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      auth: {
-        persistSession: false,
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
       },
-      global: {
-        headers: authCookie ? {
-          Authorization: `Bearer ${authCookie.value}`
-        } : {}
-      }
     }
   )
-  
-  return client
 }
 
 /**

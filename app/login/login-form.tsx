@@ -12,6 +12,7 @@ export function LoginForm() {
   const [showUsernameLookup, setShowUsernameLookup] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState('')
   const [isLookingUp, setIsLookingUp] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true) // Default to true for better UX
   
   const [state, formAction, isPending] = useActionState<
     { error?: string } | undefined,
@@ -122,6 +123,22 @@ export function LoginForm() {
               )}
             </button>
           </div>
+        </div>
+
+        {/* Remember Me Checkbox */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="rememberMe"
+            name="rememberMe"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            value="true"
+            className="w-4 h-4 rounded border-white/10 bg-[#050508]/60 text-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/20 focus:ring-offset-0 cursor-pointer"
+          />
+          <label htmlFor="rememberMe" className="text-xs md:text-sm text-[#C1C5D0] cursor-pointer select-none">
+            Remember me for 30 days
+          </label>
         </div>
 
         {/* Forgot Username Link */}
