@@ -27,7 +27,11 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
   const [searchTerm, setSearchTerm] = useState('')
 
   // Filter only upcoming matches (not started yet)
-  const upcomingMatches = matches.filter(m => m.status === 'upcoming')
+  const now = new Date()
+  const upcomingMatches = matches.filter(m => {
+    const kickoff = new Date(m.kickoff_time)
+    return m.status === 'upcoming' && kickoff > now
+  })
   
   // Filter by search term
   const filteredMatches = upcomingMatches.filter(m =>
@@ -83,6 +87,27 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
   }
 
   const handleSubmit = () => {
+    // Check if any selected matches have already started
+    const now = new Date()
+    const startedMatches = Array.from(predictions.values()).filter(p => {
+      const kickoff = new Date(p.match.kickoff_time)
+      return kickoff <= now
+    })
+
+    if (startedMatches.length > 0) {
+      toast.error(`${startedMatches.length} match(es) have already started! Removing them from your selection.`)
+      // Remove started matches from predictions
+      const newPredictions = new Map(predictions)
+      const newSelected = new Set(selectedMatches)
+      startedMatches.forEach(m => {
+        newPredictions.delete(m.matchId)
+        newSelected.delete(m.matchId)
+      })
+      setPredictions(newPredictions)
+      setSelectedMatches(newSelected)
+      return
+    }
+
     // Validate that all selected matches have predictions
     const incompletePredictions = Array.from(predictions.values()).filter(
       p => p.predictedHome === null || p.predictedAway === null

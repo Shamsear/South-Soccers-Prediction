@@ -56,6 +56,25 @@ export async function submitPrediction(
       return { error: 'Scores must be between 0 and 15' }
     }
 
+    // Fetch fresh match data to check if it has started
+    const { data: match, error: matchError } = await supabase
+      .from('matches')
+      .select('kickoff_time, status')
+      .eq('id', matchId)
+      .single()
+
+    if (matchError || !match) {
+      return { error: 'Match not found. Please refresh the page.' }
+    }
+
+    // Check if match has already started (server-side validation with fresh data)
+    const now = new Date()
+    const kickoff = new Date(match.kickoff_time)
+    
+    if (kickoff <= now || match.status !== 'upcoming') {
+      return { error: 'Match has already started! Predictions are locked.' }
+    }
+
     // Use upsert with onConflict to handle race conditions atomically
     // This prevents duplicate predictions and handles concurrent submissions
     // The database trigger will still validate kickoff time

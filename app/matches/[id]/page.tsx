@@ -18,6 +18,7 @@ import { CountdownTimer } from '@/components/countdown-timer'
 import { TeamLogoBadge } from '@/components/team-logo-badge'
 import { AdminPredictionsList } from '@/components/admin-predictions-list'
 import { PublicPredictionsList } from '@/components/public-predictions-list'
+import { AutoRefreshWrapper } from '@/components/auto-refresh-wrapper'
 import { formatCompetitionRound, formatGroupName } from '@/lib/format-text'
 import type { Database } from '@/types/database'
 import { ChevronLeft, Calendar, MapPin, Award } from 'lucide-react'
@@ -175,10 +176,12 @@ export default async function MatchDetailPage({ params }: PageProps) {
   const isLocked = kickoff <= now
 
   const ticketHostClass = getHostCountryClass(typedMatch.venue)
+  const hasLiveMatch = typedMatch.status === 'live'
 
   return (
-    <div className="relative min-h-screen bg-[#030306] py-6 md:py-12 overflow-hidden">
-      <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
+    <AutoRefreshWrapper hasLiveMatches={hasLiveMatch}>
+      <div className="relative min-h-screen bg-[#030306] py-6 md:py-12 overflow-hidden">
+        <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
 
       <div className="container mx-auto px-3 md:px-4 max-w-5xl relative z-10">
         
@@ -332,6 +335,7 @@ export default async function MatchDetailPage({ params }: PageProps) {
         )}
 
       </div>
-    </div>
+      </div>
+    </AutoRefreshWrapper>
   )
 }

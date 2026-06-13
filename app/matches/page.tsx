@@ -13,6 +13,7 @@ import { MatchFixtureCard } from '@/components/match-fixture-card'
 import { MatchesFilter } from '@/components/matches-filter'
 import { AutoSyncMatches } from '@/components/auto-sync-matches'
 import { BulkPredictButton } from '@/components/bulk-predict-button'
+import { AutoRefreshWrapper } from '@/components/auto-refresh-wrapper'
 
 export const metadata: Metadata = {
   title: 'Matches | South Soccers Prediction League',
@@ -110,10 +111,13 @@ export default async function MatchesPage() {
   }, {} as GroupedMatches)
 
   const rounds = Object.keys(groupedMatches).sort()
+  
+  const hasLiveMatches = liveMatchesCount > 0
 
   return (
-    <div className="relative min-h-screen bg-[#030306] overflow-hidden">
-      <AutoSyncMatches />
+    <AutoRefreshWrapper hasLiveMatches={hasLiveMatches}>
+      <div className="relative min-h-screen bg-[#030306] overflow-hidden">
+        <AutoSyncMatches />
       
       {/* Background Effects */}
       <div className="absolute inset-0 bg-cyber-pitch opacity-[0.05]" />
@@ -211,5 +215,6 @@ export default async function MatchesPage() {
         )}
       </div>
     </div>
+    </AutoRefreshWrapper>
   )
 }

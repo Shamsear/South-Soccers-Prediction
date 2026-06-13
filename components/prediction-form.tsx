@@ -95,6 +95,16 @@ export function PredictionForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Check if match has started (client-side validation with current time)
+    const now = new Date()
+    const kickoff = new Date(kickoffTime)
+    
+    if (kickoff <= now) {
+      setIsLocked(true)
+      toast.error('Match has already started! Predictions are locked.')
+      return
+    }
+
     if (isLocked) {
       toast.error('Predictions are locked. Match has kicked off.')
       return
@@ -112,6 +122,10 @@ export function PredictionForm({
 
         if (result.error) {
           toast.error(result.error)
+          // If error indicates match started, update locked state
+          if (result.error.includes('started') || result.error.includes('locked')) {
+            setIsLocked(true)
+          }
           return
         }
 

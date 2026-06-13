@@ -3,7 +3,6 @@ import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { Navigation } from "@/components/navigation";
-import { LiveMatchBanner } from "@/components/live-match-banner";
 import { FooterContent } from "@/components/footer-content";
 import Link from "next/link";
 import "./globals.css";
@@ -38,9 +37,8 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col bg-[#050509] text-white antialiased">
-        {/* Header Stack - LiveMatchBanner + Navigation */}
+        {/* Header Stack - Navigation */}
         <div className="sticky top-0 z-50 flex flex-col w-full">
-          <LiveMatchBanner />
           <Navigation />
         </div>
 
