@@ -58,7 +58,27 @@ export default async function LeaderboardPage() {
     console.error('Error fetching leaderboard:', leaderboardError)
   }
 
-  const typedLeaderboard = (leaderboard as LeaderboardEntry[]) || []
+  // Fetch all predictions to get the total count per user (requires service role to bypass RLS)
+  const { createServiceRoleClient } = await import('@/lib/supabase/server')
+  const adminSupabase = createServiceRoleClient()
+  const { data: allPredictions } = await adminSupabase
+    .from('predictions')
+    .select('user_id')
+
+  const predictionCounts: Record<string, number> = {}
+  if (allPredictions) {
+    allPredictions.forEach(p => {
+      predictionCounts[p.user_id] = (predictionCounts[p.user_id] || 0) + 1
+    })
+  }
+
+  const rawLeaderboard = (leaderboard as LeaderboardEntry[]) || []
+  
+  // Overwrite scored_count with the total prediction count
+  const typedLeaderboard = rawLeaderboard.map(entry => ({
+    ...entry,
+    scored_count: predictionCounts[entry.id] || 0
+  }))
 
   // Calculate stats
   const totalPlayers = typedLeaderboard.length
@@ -128,7 +148,7 @@ export default async function LeaderboardPage() {
           <div className="bg-[#0E0E13] border border-white/5 p-5 rounded-xl">
             <div className="flex items-center gap-3 mb-2">
               <Award className="w-5 h-5 text-[#D80027]" />
-              <p className="text-xs font-black text-[#8A92A6] uppercase">Exact Scores</p>
+              <p className="text-xs font-black text-[#8A92A6] uppercase">Correct Predictions</p>
             </div>
             <p className="text-3xl font-black text-white">{totalExact}</p>
           </div>

@@ -65,7 +65,7 @@ export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTabl
                 Points
               </th>
               <th className="px-6 py-4 text-right text-[11px] font-black text-[#8A92A6] uppercase tracking-wider">
-                Exact Scores
+                Correct Predictions
               </th>
               <th className="px-6 py-4 text-right text-[11px] font-black text-[#8A92A6] uppercase tracking-wider">
                 Predictions

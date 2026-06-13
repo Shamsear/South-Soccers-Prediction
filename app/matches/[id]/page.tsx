@@ -154,11 +154,14 @@ export default async function MatchDetailPage({ params }: PageProps) {
   // Fetch ALL predictions if admin
   let allPredictions: PredictionWithUser[] = []
   if (isAdmin) {
-    const { data: predictions } = await supabase
+    const { createServiceRoleClient } = await import('@/lib/supabase/server')
+    const adminSupabase = createServiceRoleClient()
+    
+    const { data: predictions } = await adminSupabase
       .from('predictions')
       .select(`
         *,
-        profiles:user_id (
+        profiles (
           id,
           username,
           avatar_url,
