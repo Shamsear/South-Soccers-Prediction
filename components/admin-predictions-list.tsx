@@ -22,6 +22,7 @@ interface Prediction {
   predicted_home: number
   predicted_away: number
   points_awarded: number | null
+  created_at?: string
   profiles: Profile
 }
 
@@ -32,7 +33,17 @@ interface AdminPredictionsListProps {
 export function AdminPredictionsList({ predictions }: AdminPredictionsListProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredPredictions = predictions.filter((pred) =>
+  const sortedPredictions = [...predictions].sort((a, b) => {
+    if (a.points_awarded !== null && b.points_awarded !== null) {
+      return b.points_awarded - a.points_awarded
+    }
+    if (a.created_at && b.created_at) {
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    }
+    return 0
+  })
+
+  const filteredPredictions = sortedPredictions.filter((pred) =>
     pred.profiles.username.toLowerCase().includes(searchTerm.toLowerCase())
   )
 

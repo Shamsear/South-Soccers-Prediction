@@ -11,6 +11,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import { LeaderboardTable } from '@/components/leaderboard-table'
 import { Trophy, Award, Target, TrendingUp, Users } from 'lucide-react'
 import { AutoSyncMatches } from '@/components/auto-sync-matches'
+import { AdminLeaderboardPoster } from '@/components/admin-leaderboard-poster'
 
 export const metadata: Metadata = {
   title: 'Leaderboard | South Soccers Prediction League',
@@ -215,7 +216,10 @@ export default async function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Leaderboard Table */}
+        {/* Leaderboard Actions */}
+        <div className="mb-4">
+          <AdminLeaderboardPoster leaderboard={typedLeaderboard as any} />
+        </div>
         <LeaderboardTable leaderboard={typedLeaderboard} currentUserId={user.id} />
 
       </div>

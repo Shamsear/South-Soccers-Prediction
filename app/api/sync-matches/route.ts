@@ -278,7 +278,7 @@ async function processUnscoredMatches(serviceSupabase: any, forceRescoreAll: boo
   try {
     let query = serviceSupabase
       .from('matches')
-      .select('id, home_score, away_score')
+      .select('id, home_score, away_score, kickoff_time')
       .eq('status', 'finished')
 
     // If not forcing rescore, only select matches that haven't been announced
@@ -339,7 +339,8 @@ async function processUnscoredMatches(serviceSupabase: any, forceRescoreAll: boo
             .from('matches')
             .update({ 
               status: 'finished', 
-              winner_announced: true 
+              winner_announced: true,
+              kickoff_time: match.kickoff_time
             })
             .eq('id', match.id)
 
