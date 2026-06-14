@@ -40,7 +40,14 @@ export async function submitPrediction(
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
+      console.error('Authentication error:', authError)
       return { error: 'Unauthorized. Please sign in to submit predictions.' }
+    }
+
+    // Double-check we have a valid user ID
+    if (!user.id) {
+      console.error('User ID is missing from auth context')
+      return { error: 'Authentication error. Please sign out and sign in again.' }
     }
 
     // Validate input
@@ -96,7 +103,20 @@ export async function submitPrediction(
       .single()
 
     if (error) {
-      console.error('Prediction submission error:', error)
+      console.error('Prediction submission error:', {
+        error,
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        userId: user.id,
+        matchId,
+      })
+
+      // Handle RLS policy violation
+      if (error.code === '42501' || error.message.includes('row-level security') || error.message.includes('policy')) {
+        return { error: 'Permission denied. Please sign out and sign in again, then try submitting your prediction.' }
+      }
 
       // Handle kickoff time validation error from DB trigger
       if (
