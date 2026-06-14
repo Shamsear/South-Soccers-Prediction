@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { submitBulkPredictions } from '@/app/actions/bulk-predictions'
 import { toast } from 'sonner'
 import { X, CheckCircle, AlertCircle, Zap, Plus, Minus, Search } from 'lucide-react'
@@ -21,6 +22,7 @@ interface PredictionEntry {
 }
 
 export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalProps) {
+  const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [selectedMatches, setSelectedMatches] = useState<Set<string>>(new Set())
   const [predictions, setPredictions] = useState<Map<string, PredictionEntry>>(new Map())
@@ -135,6 +137,7 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
       if (result.success) {
         if (result.failureCount === 0) {
           toast.success(`All ${result.successCount} predictions submitted successfully!`)
+          router.refresh()
           onClose()
         } else {
           toast.warning(
@@ -143,6 +146,7 @@ export function BulkPredictionModal({ matches, onClose }: BulkPredictionModalPro
               description: result.errors?.map(e => e.error).join(', '),
             }
           )
+          router.refresh()
         }
       } else {
         toast.error(`Failed to submit predictions. ${result.errors?.[0]?.error || 'Unknown error'}`)

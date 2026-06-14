@@ -7,11 +7,11 @@
 
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { submitPrediction } from '@/app/actions/predictions'
-import { Plus, Minus, CheckCircle, Lock } from 'lucide-react'
+import { Plus, Minus, CheckCircle, Lock, Loader2 } from 'lucide-react'
 
 interface PredictionFormProps {
   matchId: string
@@ -36,14 +36,23 @@ export function PredictionForm({
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [isLocked, setIsLocked] = useState(initialLocked)
+  const [savedPrediction, setSavedPrediction] = useState<typeof existingPrediction>(existingPrediction)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   // Initialize with existing prediction or empty for new predictions
   const [homeScore, setHomeScore] = useState<number | null>(
-    existingPrediction?.predicted_home ?? null
+    savedPrediction?.predicted_home ?? null
   )
   const [awayScore, setAwayScore] = useState<number | null>(
-    existingPrediction?.predicted_away ?? null
+    savedPrediction?.predicted_away ?? null
   )
+
+  // Sync state with server prop changes
+  useEffect(() => {
+    setSavedPrediction(existingPrediction)
+    setHomeScore(existingPrediction?.predicted_home ?? null)
+    setAwayScore(existingPrediction?.predicted_away ?? null)
+  }, [existingPrediction])
 
   // Increment/decrement handlers
   const incrementHome = () => {
@@ -116,9 +125,12 @@ export function PredictionForm({
       return
     }
 
+    const submittedHome = homeScore
+    const submittedAway = awayScore
+
     startTransition(async () => {
       try {
-        const result = await submitPrediction(matchId, homeScore, awayScore)
+        const result = await submitPrediction(matchId, submittedHome, submittedAway)
 
         if (result.error) {
           toast.error(result.error)
@@ -130,7 +142,14 @@ export function PredictionForm({
         }
 
         if (result.success) {
-          if (existingPrediction) {
+          setSavedPrediction({
+            predicted_home: submittedHome,
+            predicted_away: submittedAway,
+          })
+          setIsSuccess(true)
+          setTimeout(() => setIsSuccess(false), 2000)
+
+          if (savedPrediction) {
             toast.success('Prediction updated successfully! 🎉')
           } else {
             toast.success('Prediction submitted successfully! 🎉')
@@ -150,7 +169,7 @@ export function PredictionForm({
     <div className="w-full">
       <div className="text-center mb-4 md:mb-8">
         <h3 className="text-base md:text-xl font-heading font-black text-[#F3A81D] tracking-wider uppercase">
-          {existingPrediction ? 'Update Your Prediction' : 'Submit Your Score Prediction'}
+          {savedPrediction ? 'Update Your Prediction' : 'Submit Your Score Prediction'}
         </h3>
         <div className="h-0.5 md:h-1 w-8 md:w-12 bg-[#F3A81D] mx-auto mt-2 md:mt-3" />
       </div>
@@ -164,8 +183,8 @@ export function PredictionForm({
         </div>
       )}
 
-      {existingPrediction && !isLocked && (
-        <div className="bg-blue-950/20 border-2 border-blue-500/40 rounded p-3 md:p-4 mb-4 md:mb-8 flex items-center justify-center gap-2 md:gap-3">
+      {savedPrediction && !isLocked && (
+        <div className="bg-blue-950/20 border-2 border-blue-500/40 rounded p-3 md:p-4 mb-4 md:mb-8 flex items-center justify-center gap-2 md:gap-3 animate-in fade-in duration-300">
           <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
           <p className="text-blue-400 font-black text-[10px] md:text-xs uppercase tracking-wide">
             You can still edit your prediction until kickoff
@@ -203,7 +222,11 @@ export function PredictionForm({
                 onChange={handleHomeScoreChange}
                 disabled={formDisabled}
                 placeholder="-"
-                className="w-14 h-14 md:w-20 md:h-20 bg-black/60 border-2 border-[#F3A81D] rounded flex items-center justify-center text-2xl md:text-4xl font-black text-white font-heading shadow-2xl text-center focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/50 disabled:opacity-50 placeholder:text-white/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className={`w-14 h-14 md:w-20 md:h-20 bg-black/60 border-2 rounded flex items-center justify-center text-2xl md:text-4xl font-black text-white font-heading shadow-2xl text-center focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/50 disabled:opacity-50 placeholder:text-white/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-all duration-300 ${
+                  isSuccess 
+                    ? 'border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] ring-2 ring-emerald-500/30' 
+                    : 'border-[#F3A81D]'
+                }`}
               />
               
               <button
@@ -246,7 +269,11 @@ export function PredictionForm({
                 onChange={handleAwayScoreChange}
                 disabled={formDisabled}
                 placeholder="-"
-                className="w-14 h-14 md:w-20 md:h-20 bg-black/60 border-2 border-[#F3A81D] rounded flex items-center justify-center text-2xl md:text-4xl font-black text-white font-heading shadow-2xl text-center focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/50 disabled:opacity-50 placeholder:text-white/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className={`w-14 h-14 md:w-20 md:h-20 bg-black/60 border-2 rounded flex items-center justify-center text-2xl md:text-4xl font-black text-white font-heading shadow-2xl text-center focus:outline-none focus:border-[#F3A81D] focus:ring-2 focus:ring-[#F3A81D]/50 disabled:opacity-50 placeholder:text-white/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-all duration-300 ${
+                  isSuccess 
+                    ? 'border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] ring-2 ring-emerald-500/30' 
+                    : 'border-[#F3A81D]'
+                }`}
               />
               
               <button
@@ -264,16 +291,29 @@ export function PredictionForm({
         </div>
 
         {/* Submit/Update Prediction */}
-        <div className="flex justify-center max-w-xs mx-auto">
+        <div className="flex justify-center max-w-xs mx-auto w-full">
           <button
             type="submit"
             disabled={formDisabled}
-            className="btn-tactile btn-tactile-red text-xs py-3 md:py-3.5 w-full flex items-center justify-center gap-2"
+            className={`btn-tactile text-xs py-3 md:py-3.5 w-full flex items-center justify-center gap-2 transition-all duration-300 ${
+              isSuccess 
+                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)] border border-emerald-400' 
+                : 'btn-tactile-red'
+            }`}
           >
-            {isPending 
-              ? (existingPrediction ? 'Updating...' : 'Locking in Score...') 
-              : (existingPrediction ? 'Update Prediction 🎯' : 'Submit Prediction 🎯')
-            }
+            {isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <span>{savedPrediction ? 'Updating...' : 'Locking in Score...'}</span>
+              </>
+            ) : isSuccess ? (
+              <>
+                <CheckCircle className="w-4 h-4 animate-bounce text-white" />
+                <span>Saved Successfully! 🎉</span>
+              </>
+            ) : (
+              <span>{savedPrediction ? 'Update Prediction 🎯' : 'Submit Prediction 🎯'}</span>
+            )}
           </button>
         </div>
       </form>

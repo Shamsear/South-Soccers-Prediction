@@ -64,6 +64,9 @@ export async function createServerClient() {
           }
         },
       },
+      cookieOptions: {
+        maxAge: 60 * 60 * 24 * 30, // Persist sessions for 30 days
+      },
     }
   )
 }

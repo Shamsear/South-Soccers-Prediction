@@ -24,6 +24,9 @@ export async function middleware(request: NextRequest) {
           )
         },
       },
+      cookieOptions: {
+        maxAge: 60 * 60 * 24 * 30, // Persist sessions for 30 days
+      },
     }
   )
 
@@ -31,17 +34,10 @@ export async function middleware(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  let user = null;
-
   try {
-    const { data } = await supabase.auth.getUser()
-    user = data.user;
-
-    // Refresh session if user is logged in
-    // This keeps the session alive and prevents automatic logout
-    if (user) {
-      await supabase.auth.refreshSession()
-    }
+    // Calling getUser() automatically refreshes the session under the hood if it has expired.
+    // This is the officially recommended way to handle auth session refreshes in Next.js middleware.
+    await supabase.auth.getUser()
   } catch (error) {
     // Edge runtime fetch errors to Supabase shouldn't crash the entire app.
     // Instead, log the error and allow the request to proceed as an unauthenticated request.
