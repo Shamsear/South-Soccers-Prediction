@@ -260,7 +260,7 @@ export default async function DashboardPage() {
                 recentPredictions.map((pred: any) => {
                   const match = pred.matches
                   const isFinished = match?.status === 'finished'
-                  const points = pred.points_earned || 0
+                  const points = pred.total_points ?? pred.points_awarded ?? 0
                   
                   return (
                     <div key={pred.id} className="bg-[#050508]/60 border border-white/5 rounded-lg p-3 md:p-4">
@@ -270,9 +270,9 @@ export default async function DashboardPage() {
                         </span>
                         {isFinished && (
                           <span className={`text-[8px] md:text-[9px] font-black uppercase tracking-wider ${
-                            points === 3 ? 'text-[#10B981]' : points === 1 ? 'text-[#F3A81D]' : 'text-[#8A92A6]'
+                            points >= 5 ? 'text-[#10B981]' : points >= 3 ? 'text-[#F3A81D]' : 'text-[#8A92A6]'
                           }`}>
-                            {points === 3 ? 'Exact' : points === 1 ? 'Correct' : 'Miss'}
+                            {points >= 5 ? 'Exact' : points >= 3 ? 'Correct' : 'Miss'}
                           </span>
                         )}
                       </div>

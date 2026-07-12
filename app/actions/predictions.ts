@@ -31,7 +31,8 @@ interface SubmitPredictionResult {
 export async function submitPrediction(
   matchId: string,
   predictedHome: number,
-  predictedAway: number
+  predictedAway: number,
+  predictedPenaltyWinner: string | null = null
 ): Promise<SubmitPredictionResult> {
   try {
     const supabase = await createServerClient()
@@ -93,6 +94,7 @@ export async function submitPrediction(
           match_id: matchId,
           predicted_home: predictedHome,
           predicted_away: predictedAway,
+          predicted_penalty_winner: predictedPenaltyWinner,
         },
         {
           onConflict: 'user_id,match_id',

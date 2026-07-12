@@ -321,6 +321,7 @@ export default async function MatchDetailPage({ params }: PageProps) {
                   isLocked={isLocked || typedMatch.status !== 'upcoming'}
                   homeTeam={typedMatch.home_team}
                   awayTeam={typedMatch.away_team}
+                  competitionRound={typedMatch.competition_round}
                 />
               </div>
             )}

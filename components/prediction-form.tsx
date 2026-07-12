@@ -19,10 +19,12 @@ interface PredictionFormProps {
   existingPrediction?: {
     predicted_home: number
     predicted_away: number
+    predicted_penalty_winner?: string | null
   } | null
   isLocked: boolean
   homeTeam: string
   awayTeam: string
+  competitionRound?: string
 }
 
 export function PredictionForm({
@@ -32,6 +34,7 @@ export function PredictionForm({
   isLocked: initialLocked,
   homeTeam,
   awayTeam,
+  competitionRound,
 }: PredictionFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -46,12 +49,32 @@ export function PredictionForm({
   const [awayScore, setAwayScore] = useState<number | null>(
     savedPrediction?.predicted_away ?? null
   )
+  const [penaltyWinner, setPenaltyWinner] = useState<string | null>(
+    savedPrediction?.predicted_penalty_winner ?? null
+  )
+
+  const isKnockout = competitionRound
+    ? [
+        'ROUND_OF_32',
+        'LAST_32',
+        'ROUND_OF_16',
+        'LAST_16',
+        'QUARTER_FINALS',
+        'QUARTER_FINAL',
+        'SEMI_FINALS',
+        'SEMI_FINAL',
+        'THIRD_PLACE',
+        'FINAL',
+        'FINALS',
+      ].includes(competitionRound.toUpperCase())
+    : false
 
   // Sync state with server prop changes
   useEffect(() => {
     setSavedPrediction(existingPrediction)
     setHomeScore(existingPrediction?.predicted_home ?? null)
     setAwayScore(existingPrediction?.predicted_away ?? null)
+    setPenaltyWinner(existingPrediction?.predicted_penalty_winner ?? null)
   }, [existingPrediction])
 
   // Increment/decrement handlers
@@ -127,10 +150,17 @@ export function PredictionForm({
 
     const submittedHome = homeScore
     const submittedAway = awayScore
+    const submittedPenaltyWinner = isKnockout && submittedHome === submittedAway ? penaltyWinner : null
+
+    // If knockout draw, user must choose a penalty shootout winner
+    if (isKnockout && submittedHome === submittedAway && !submittedPenaltyWinner) {
+      toast.error('Please select a predicted penalty shootout winner.')
+      return
+    }
 
     startTransition(async () => {
       try {
-        const result = await submitPrediction(matchId, submittedHome, submittedAway)
+        const result = await submitPrediction(matchId, submittedHome, submittedAway, submittedPenaltyWinner)
 
         if (result.error) {
           toast.error(result.error)
@@ -145,6 +175,7 @@ export function PredictionForm({
           setSavedPrediction({
             predicted_home: submittedHome,
             predicted_away: submittedAway,
+            predicted_penalty_winner: submittedPenaltyWinner,
           })
           setIsSuccess(true)
           setTimeout(() => setIsSuccess(false), 2000)
@@ -289,6 +320,41 @@ export function PredictionForm({
           </div>
 
         </div>
+
+        {/* Penalty Shootout Winner Selector (Knockout matches only, shown on draw prediction) */}
+        {isKnockout && homeScore !== null && awayScore !== null && homeScore === awayScore && (
+          <div className="bg-[#0A0A0F] border border-white/5 rounded-xl p-4 md:p-6 max-w-sm mx-auto space-y-3 md:space-y-4 animate-in fade-in duration-300">
+            <p className="text-center text-[10px] md:text-xs font-black text-[#8A92A6] uppercase tracking-wider">
+              🏆 Knockout Match Draw - Who wins the Penalty Shootout?
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                type="button"
+                disabled={formDisabled}
+                onClick={() => setPenaltyWinner('home')}
+                className={`flex-1 py-2.5 px-4 rounded font-bold text-xs uppercase transition-all duration-300 active:scale-95 ${
+                  penaltyWinner === 'home'
+                    ? 'bg-gradient-to-r from-[#F3A81D] to-[#D80027] text-white shadow-[0_0_15px_rgba(243,168,29,0.3)] ring-2 ring-[#F3A81D]'
+                    : 'bg-[#161620] hover:bg-[#1C1C29] text-[#C1C5D0] border border-white/5'
+                }`}
+              >
+                {homeTeam}
+              </button>
+              <button
+                type="button"
+                disabled={formDisabled}
+                onClick={() => setPenaltyWinner('away')}
+                className={`flex-1 py-2.5 px-4 rounded font-bold text-xs uppercase transition-all duration-300 active:scale-95 ${
+                  penaltyWinner === 'away'
+                    ? 'bg-gradient-to-r from-[#F3A81D] to-[#D80027] text-white shadow-[0_0_15px_rgba(243,168,29,0.3)] ring-2 ring-[#F3A81D]'
+                    : 'bg-[#161620] hover:bg-[#1C1C29] text-[#C1C5D0] border border-white/5'
+                }`}
+              >
+                {awayTeam}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Submit/Update Prediction */}
         <div className="flex justify-center max-w-xs mx-auto w-full">

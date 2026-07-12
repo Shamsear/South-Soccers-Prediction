@@ -25,7 +25,10 @@ export function calculatePoints(
   predictedHome: number,
   predictedAway: number,
   actualHome: number,
-  actualAway: number
+  actualAway: number,
+  predictedPenaltyWinner?: string | null,
+  actualPenaltyWinner?: string | null,
+  competitionRound?: string
 ): number {
   // Validate inputs
   if (
@@ -37,24 +40,61 @@ export function calculatePoints(
     throw new Error('Scores cannot be negative')
   }
 
-  // Check for exact scoreline match (3 points)
-  if (predictedHome === actualHome && predictedAway === actualAway) {
-    return 3
-  }
+  const isKnockout = competitionRound
+    ? [
+        'ROUND_OF_32',
+        'LAST_32',
+        'ROUND_OF_16',
+        'LAST_16',
+        'QUARTER_FINALS',
+        'QUARTER_FINAL',
+        'SEMI_FINALS',
+        'SEMI_FINAL',
+        'THIRD_PLACE',
+        'FINAL',
+        'FINALS',
+      ].includes(competitionRound.toUpperCase())
+    : false
 
-  // Determine actual result
-  const actualResult = getResult(actualHome, actualAway)
-  
-  // Determine predicted result
+  const predictedDiff = Math.abs(predictedHome - predictedAway)
+  const actualDiff = Math.abs(actualHome - actualAway)
+
   const predictedResult = getResult(predictedHome, predictedAway)
+  const actualResult = getResult(actualHome, actualAway)
 
-  // Check if result is correct (1 point)
-  if (actualResult === predictedResult) {
-    return 1
+  let basePoints = 0
+  let goalDiffBonus = 0
+  let knockoutBonus = 0
+  let penaltyBonus = 0
+
+  // 1. Exact score (5 points)
+  if (predictedHome === actualHome && predictedAway === actualAway) {
+    basePoints = 5
+    if (isKnockout) {
+      knockoutBonus = 2
+    }
+  }
+  // 2. Correct winner/result (3 points)
+  else if (predictedResult === actualResult) {
+    basePoints = 3
+    // Goal difference bonus (+1 point, excluding draws)
+    if (predictedDiff === actualDiff && actualResult !== 'draw') {
+      goalDiffBonus = 1
+    }
+  } else {
+    basePoints = 0
   }
 
-  // Incorrect result (0 points)
-  return 0
+  // Penalty shootout bonus (+2 points)
+  if (
+    isKnockout &&
+    actualPenaltyWinner &&
+    predictedPenaltyWinner === actualPenaltyWinner
+  ) {
+    penaltyBonus = 2
+  }
+
+  return basePoints + goalDiffBonus + knockoutBonus + penaltyBonus
 }
 
 /**
@@ -77,18 +117,24 @@ function getResult(homeScore: number, awayScore: number): 'home' | 'draw' | 'awa
 /**
  * Get a human-readable description of the points awarded
  * 
- * @param points - Points awarded (0, 1, or 3)
+ * @param points - Points awarded
  * @returns Description string
  */
 export function getPointsDescription(points: number): string {
   switch (points) {
+    case 9:
+      return '🎯 Exact Score + KO + Penalty Winner!'
+    case 7:
+      return '🎯 Exact Score + KO Bonus!'
+    case 5:
+      return '🎯 Exact Score!'
+    case 4:
+      return '✓ Result + Margin Bonus'
     case 3:
-      return '🎯 Exact score!'
-    case 1:
-      return '✓ Correct result'
+      return '✓ Correct Result'
     case 0:
       return 'Incorrect'
     default:
-      return 'Unknown'
+      return `${points} Points`
   }
 }

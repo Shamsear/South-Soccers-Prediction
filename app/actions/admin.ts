@@ -37,7 +37,8 @@ interface ImportPredictionResult {
 export async function scoreMatch(
   matchId: string,
   homeScore: number,
-  awayScore: number
+  awayScore: number,
+  penaltyWinner: string | null = null
 ): Promise<ScoreMatchResult> {
   try {
     const supabase = await createServerClient()
@@ -117,24 +118,17 @@ export async function scoreMatch(
       }
     }
 
-    // Calculate points for each prediction and update
-    const now = new Date().toISOString()
+    // Calculate points for each prediction and update using RPC (which handles advanced scoring and audit trail)
     const typedPredictions = predictions as any[]
     const updatePromises = typedPredictions.map(async (prediction) => {
-      const points = calculatePoints(
-        prediction.predicted_home,
-        prediction.predicted_away,
-        homeScore,
-        awayScore
-      )
-
-      return (serviceSupabase
-        .from('predictions') as any)
-        .update({
-          points_awarded: points,
-          scored_at: now,
-        })
-        .eq('id', prediction.id)
+      return serviceSupabase.rpc('score_prediction_with_audit', {
+        p_prediction_id: prediction.id,
+        p_match_id: matchId,
+        p_actual_home: homeScore,
+        p_actual_away: awayScore,
+        p_actual_penalty_winner: penaltyWinner,
+        p_scored_by: user.id
+      })
     })
 
     const updateResults = await Promise.all(updatePromises)
@@ -171,9 +165,9 @@ export async function scoreMatch(
         0
       )
 
-      // Count correct predictions (3 points = exact score)
+      // Count correct predictions (5+ points = exact score under new advanced system)
       const correctPredictions = typedUserPredictions.filter(
-        pred => pred.points_awarded === 3
+        pred => (pred.points_awarded || 0) >= 5
       ).length
 
       // Update user profile
@@ -311,11 +305,13 @@ export async function importPrediction(data: {
     }
 
     // Calculate points if match is finished
+    let isFinished = false
     if (
       typedMatch.status === 'finished' &&
       typedMatch.home_score !== null &&
       typedMatch.away_score !== null
     ) {
+      isFinished = true
       const points = calculatePoints(
         predictedHome,
         predictedAway,
@@ -323,21 +319,39 @@ export async function importPrediction(data: {
         typedMatch.away_score
       )
       predictionData.points_awarded = points
+      predictionData.total_points = points
       predictionData.scored_at = new Date().toISOString()
     }
 
-    // Insert prediction
-    const { error: insertError } = await serviceSupabase
+    // Insert prediction and get ID
+    const { data: insertedData, error: insertError } = await serviceSupabase
       .from('predictions')
       .insert(predictionData)
+      .select('id')
+      .single()
 
-    if (insertError) {
+    if (insertError || !insertedData) {
       console.error('Error inserting prediction:', insertError)
       return { error: 'Failed to import prediction' }
     }
 
+    // If match was already finished, run the audit scoring RPC
+    if (isFinished) {
+      const { error: rpcError } = await serviceSupabase.rpc('score_prediction_with_audit', {
+        p_prediction_id: insertedData.id,
+        p_match_id: matchId,
+        p_actual_home: typedMatch.home_score,
+        p_actual_away: typedMatch.away_score,
+        p_actual_penalty_winner: null,
+        p_scored_by: user.id
+      })
+      if (rpcError) {
+        console.error('Error running scoring audit RPC for imported prediction:', rpcError)
+      }
+    }
+
     // Update user stats if points were calculated
-    if (predictionData.points_awarded !== undefined) {
+    if (isFinished) {
       // Get all scored predictions for this user
       const { data: userPredictions } = await serviceSupabase
         .from('predictions')
@@ -354,7 +368,7 @@ export async function importPrediction(data: {
         )
 
         const correctPredictions = typedUserPredictions.filter(
-          pred => pred.points_awarded === 3
+          pred => (pred.points_awarded || 0) >= 5
         ).length
 
         await serviceSupabase
