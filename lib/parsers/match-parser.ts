@@ -90,17 +90,7 @@ export function extractScore(match: FootballDataMatch): {
 } {
   const { score } = match
 
-  // For knockout matches with extra time or penalties, prefer regularTime
-  if (score.duration === 'EXTRA_TIME' || score.duration === 'PENALTY_SHOOTOUT') {
-    if (score.regularTime) {
-      return {
-        home_score: score.regularTime.home,
-        away_score: score.regularTime.away,
-      }
-    }
-  }
-
-  // Default to fullTime score
+  // Always use the fullTime score (which includes extra time if played)
   return {
     home_score: score.fullTime.home,
     away_score: score.fullTime.away,
