@@ -21,6 +21,7 @@ interface Prediction {
   id: string
   predicted_home: number
   predicted_away: number
+  predicted_penalty_winner?: string | null
   points_awarded: number | null
   created_at?: string
   profiles: Profile
@@ -28,9 +29,11 @@ interface Prediction {
 
 interface AdminPredictionsListProps {
   predictions: Prediction[]
+  homeTeam: string
+  awayTeam: string
 }
 
-export function AdminPredictionsList({ predictions }: AdminPredictionsListProps) {
+export function AdminPredictionsList({ predictions, homeTeam, awayTeam }: AdminPredictionsListProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
   const sortedPredictions = [...predictions].sort((a, b) => {
@@ -122,6 +125,11 @@ export function AdminPredictionsList({ predictions }: AdminPredictionsListProps)
                   <p className="text-xs text-[#8A92A6] uppercase font-bold mb-1">Predicted</p>
                   <p className="text-lg font-black text-white bg-black/60 px-3 py-1 rounded border border-white/10">
                     {pred.predicted_home} - {pred.predicted_away}
+                    {pred.predicted_penalty_winner && (
+                      <span className="text-[10px] text-[#F3A81D] block mt-0.5 font-bold">
+                        Pens: {pred.predicted_penalty_winner === 'home' ? homeTeam : awayTeam}
+                      </span>
+                    )}
                   </p>
                 </div>
 

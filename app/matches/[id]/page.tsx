@@ -308,7 +308,11 @@ export default async function MatchDetailPage({ params }: PageProps) {
 
         {/* Admin View: All Predictions (with admin controls) */}
         {isAdmin ? (
-          <AdminPredictionsList predictions={allPredictions as any} />
+          <AdminPredictionsList 
+            predictions={allPredictions as any} 
+            homeTeam={typedMatch.home_team}
+            awayTeam={typedMatch.away_team}
+          />
         ) : (
           <>
             {/* Regular User View: Show prediction form only if match is not finished */}
@@ -331,6 +335,8 @@ export default async function MatchDetailPage({ params }: PageProps) {
               predictions={allPredictions as any} 
               matchStatus={typedMatch.status}
               currentUserId={user.id}
+              homeTeam={typedMatch.home_team}
+              awayTeam={typedMatch.away_team}
             />
           </>
         )}

@@ -104,6 +104,7 @@ export default async function LeaderboardPage() {
       match_id,
       predicted_home,
       predicted_away,
+      predicted_penalty_winner,
       points_awarded,
       created_at,
       matches (
@@ -128,6 +129,7 @@ export default async function LeaderboardPage() {
         match_id: pred.match_id,
         predicted_home: pred.predicted_home,
         predicted_away: pred.predicted_away,
+        predicted_penalty_winner: pred.predicted_penalty_winner,
         points_awarded: pred.points_awarded,
         created_at: pred.created_at,
         matches: pred.matches

@@ -66,6 +66,7 @@ export default async function PublicLeaderboardPage() {
           match_id,
           predicted_home,
           predicted_away,
+          predicted_penalty_winner,
           points_awarded,
           created_at,
           matches (

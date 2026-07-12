@@ -254,6 +254,11 @@ export function MatchWithPredictionsCard({
                       <div className="text-center">
                         <p className="text-xs md:text-sm font-black text-white bg-black/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded border border-white/10">
                           {pred.predicted_home} - {pred.predicted_away}
+                          {pred.predicted_penalty_winner && (
+                            <span className="text-[8px] md:text-[9px] text-[#F3A81D] block mt-0.5 font-bold">
+                              Pens: {pred.predicted_penalty_winner === 'home' ? match.home_team : match.away_team}
+                            </span>
+                          )}
                         </p>
                       </div>
 

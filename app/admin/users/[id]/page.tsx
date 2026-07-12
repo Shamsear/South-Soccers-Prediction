@@ -47,6 +47,7 @@ type Prediction = {
   id: string
   predicted_home: number
   predicted_away: number
+  predicted_penalty_winner?: string | null
   points_awarded: number | null
   created_at: string
   match: Match
@@ -334,6 +335,11 @@ export default async function PlayerDetailPage({
                           <p className="text-xs text-[#8A92A6] font-bold uppercase mb-1">Predicted</p>
                           <p className="text-2xl font-black text-[#F3A81D]">
                             {prediction.predicted_home} - {prediction.predicted_away}
+                            {prediction.predicted_penalty_winner && (
+                              <span className="text-[10px] text-[#F3A81D]/80 block mt-0.5 font-bold">
+                                Pens: {prediction.predicted_penalty_winner === 'home' ? prediction.match.home_team : prediction.match.away_team}
+                              </span>
+                            )}
                           </p>
                         </div>
 

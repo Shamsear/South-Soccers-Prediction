@@ -15,6 +15,7 @@ interface Prediction {
   match_id: string
   predicted_home: number
   predicted_away: number
+  predicted_penalty_winner?: string | null
   points_awarded: number | null
   created_at: string
   matches: {
@@ -197,7 +198,10 @@ export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTabl
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="text-[#8A92A6] text-[9px]">
-                              Predicted: <span className="text-white font-bold">{pred.predicted_home} - {pred.predicted_away}</span>
+                              Predicted: <span className="text-white font-bold">
+                                {pred.predicted_home} - {pred.predicted_away}
+                                {pred.predicted_penalty_winner && ` (Pens: ${pred.predicted_penalty_winner === 'home' ? pred.matches.home_team : pred.matches.away_team})`}
+                              </span>
                             </div>
                             {pred.matches.status === 'finished' && (
                               <div className="text-[#8A92A6] text-[9px]">
@@ -372,7 +376,10 @@ export function LeaderboardTable({ leaderboard, currentUserId }: LeaderboardTabl
                                 </div>
                                 <div className="space-y-1">
                                   <div className="text-[#8A92A6] text-xs">
-                                    Predicted: <span className="text-white font-bold">{pred.predicted_home} - {pred.predicted_away}</span>
+                                    Predicted: <span className="text-white font-bold">
+                                      {pred.predicted_home} - {pred.predicted_away}
+                                      {pred.predicted_penalty_winner && ` (Pens: ${pred.predicted_penalty_winner === 'home' ? pred.matches.home_team : pred.matches.away_team})`}
+                                    </span>
                                   </div>
                                   {pred.matches.status === 'finished' && (
                                     <div className="text-[#8A92A6] text-xs">

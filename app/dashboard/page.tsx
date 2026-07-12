@@ -278,8 +278,18 @@ export default async function DashboardPage() {
                       </div>
                       <div className="flex items-center gap-2 md:gap-3">
                         <div className="flex-1 min-w-0">
-                          <div className="text-[10px] md:text-xs text-[#8A92A6] mb-0.5 md:mb-1 truncate">{match?.home_team}</div>
-                          <div className="text-[10px] md:text-xs text-[#8A92A6] truncate">{match?.away_team}</div>
+                          <div className="text-[10px] md:text-xs text-[#8A92A6] mb-0.5 md:mb-1 truncate flex items-center gap-1">
+                            <span>{match?.home_team}</span>
+                            {pred.predicted_penalty_winner === 'home' && (
+                              <span className="text-[8px] px-1 bg-[#F3A81D]/20 border border-[#F3A81D]/30 text-[#F3A81D] font-black rounded flex-shrink-0">P</span>
+                            )}
+                          </div>
+                          <div className="text-[10px] md:text-xs text-[#8A92A6] truncate flex items-center gap-1">
+                            <span>{match?.away_team}</span>
+                            {pred.predicted_penalty_winner === 'away' && (
+                              <span className="text-[8px] px-1 bg-[#F3A81D]/20 border border-[#F3A81D]/30 text-[#F3A81D] font-black rounded flex-shrink-0">P</span>
+                            )}
+                          </div>
                         </div>
                         <div className="text-center flex-shrink-0">
                           <div className="text-xs md:text-sm font-black text-white">{pred.predicted_home}</div>

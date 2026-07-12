@@ -22,6 +22,7 @@ interface Prediction {
   id: string
   predicted_home: number
   predicted_away: number
+  predicted_penalty_winner?: string | null
   points_awarded: number | null
   created_at: string
   profiles: Profile
@@ -31,9 +32,11 @@ interface PublicPredictionsListProps {
   predictions: Prediction[]
   matchStatus: 'upcoming' | 'live' | 'finished'
   currentUserId?: string // Optional: to highlight current user's prediction
+  homeTeam: string
+  awayTeam: string
 }
 
-export function PublicPredictionsList({ predictions, matchStatus, currentUserId }: PublicPredictionsListProps) {
+export function PublicPredictionsList({ predictions, matchStatus, currentUserId, homeTeam, awayTeam }: PublicPredictionsListProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
   // Sort by points if match is finished, otherwise by created_at
@@ -158,6 +161,11 @@ export function PublicPredictionsList({ predictions, matchStatus, currentUserId 
                     <p className="text-[9px] md:text-xs text-[#8A92A6] uppercase font-bold mb-0.5 md:mb-1">Score</p>
                     <p className="text-sm md:text-lg font-black text-white bg-black/60 px-2 py-0.5 md:px-3 md:py-1 rounded border border-white/10">
                       {pred.predicted_home} - {pred.predicted_away}
+                      {pred.predicted_penalty_winner && (
+                        <span className="text-[9px] text-[#F3A81D] block mt-0.5 font-bold">
+                          Pens: {pred.predicted_penalty_winner === 'home' ? homeTeam : awayTeam}
+                        </span>
+                      )}
                     </p>
                   </div>
 
