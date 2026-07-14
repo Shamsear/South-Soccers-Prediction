@@ -125,6 +125,9 @@ export interface Database {
           match_id: string
           predicted_home: number
           predicted_away: number
+          predicted_penalty_winner: string | null
+          points_breakdown: Json | null
+          total_points: number | null
           points_awarded: number | null
           scored_at: string | null
           created_at: string
@@ -135,6 +138,9 @@ export interface Database {
           match_id: string
           predicted_home: number
           predicted_away: number
+          predicted_penalty_winner?: string | null
+          points_breakdown?: Json | null
+          total_points?: number | null
           points_awarded?: number | null
           scored_at?: string | null
           created_at?: string
@@ -145,6 +151,9 @@ export interface Database {
           match_id?: string
           predicted_home?: number
           predicted_away?: number
+          predicted_penalty_winner?: string | null
+          points_breakdown?: Json | null
+          total_points?: number | null
           points_awarded?: number | null
           scored_at?: string | null
           created_at?: string

@@ -29,6 +29,7 @@ type LeaderboardEntry = {
     match_id: string
     predicted_home: number
     predicted_away: number
+    predicted_penalty_winner: string | null
     points_awarded: number | null
     created_at: string
     matches: {
