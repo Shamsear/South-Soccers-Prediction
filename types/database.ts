@@ -187,6 +187,17 @@ export interface Database {
         Args: Record<string, never>
         Returns: void
       }
+      score_prediction_with_audit: {
+        Args: {
+          p_prediction_id: string
+          p_match_id: string
+          p_actual_home: number
+          p_actual_away: number
+          p_actual_penalty_winner: string | null
+          p_scored_by: string | null
+        }
+        Returns: Json
+      }
     }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>

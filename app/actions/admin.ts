@@ -340,8 +340,8 @@ export async function importPrediction(data: {
       const { error: rpcError } = await serviceSupabase.rpc('score_prediction_with_audit', {
         p_prediction_id: insertedData.id,
         p_match_id: matchId,
-        p_actual_home: typedMatch.home_score,
-        p_actual_away: typedMatch.away_score,
+        p_actual_home: typedMatch.home_score!,
+        p_actual_away: typedMatch.away_score!,
         p_actual_penalty_winner: null,
         p_scored_by: user.id
       })
