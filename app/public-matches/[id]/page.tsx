@@ -267,6 +267,8 @@ export default async function PublicMatchDetailPage({ params }: PageProps) {
           <PublicPredictionsList 
             predictions={allPredictions as any} 
             matchStatus={typedMatch.status}
+            homeTeam={typedMatch.home_team}
+            awayTeam={typedMatch.away_team}
           />
         </div>
 
