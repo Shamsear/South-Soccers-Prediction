@@ -10,6 +10,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createServerClient } from '@/lib/supabase/server'
 import { ForceSyncButton } from '@/components/force-sync-button'
+import { FormattedDateTime } from '@/components/formatted-date-time'
 import { 
   Users, 
   Target, 
@@ -297,7 +298,7 @@ export default async function AdminHomePage() {
               </p>
               {lastSyncTime && (
                 <p className="text-xs text-[#8A92A6] font-medium">
-                  {new Date(lastSyncTime).toLocaleString()}
+                  <FormattedDateTime isoString={lastSyncTime} mode="custom" customOptions={{ year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }} />
                 </p>
               )}
             </div>

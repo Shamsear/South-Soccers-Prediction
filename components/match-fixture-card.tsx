@@ -9,6 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Database } from '@/types/database'
 import { TeamLogoBadge } from '@/components/team-logo-badge'
+import { FormattedDateTime } from '@/components/formatted-date-time'
 import { formatGroupName } from '@/lib/format-text'
 
 type Match = Database['public']['Tables']['matches']['Row']
@@ -20,34 +21,7 @@ interface MatchFixtureCardProps {
   linkPrefix?: '/matches' | '/public-matches'
 }
 
-/**
- * Format date and time for fixture display
- * Uses user's locale and timezone automatically
- */
-function formatFixtureDateTime(isoString: string): { date: string; time: string; venue: string } {
-  const date = new Date(isoString)
-  
-  const dateOptions: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  }
-  
-  const timeOptions: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }
-  
-  return {
-    date: date.toLocaleString(undefined, dateOptions), // undefined = use browser's locale
-    time: date.toLocaleString(undefined, timeOptions), // undefined = use browser's locale
-    venue: '', // We'll use match.venue separately
-  }
-}
-
 export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = true, linkPrefix = '/matches' }: MatchFixtureCardProps) {
-  const { date, time } = formatFixtureDateTime(match.kickoff_time)
   const hasScore = match.status === 'finished' || match.status === 'live'
   const formattedGroupName = formatGroupName(match.group_name)
   
@@ -100,7 +74,9 @@ export function MatchFixtureCard({ match, showGroupBadge = true, isClickable = t
         {/* Date, Time & Venue */}
         <div className="px-3 md:px-4 pt-2 md:pt-3 pb-1.5 md:pb-2 border-b border-white/5 bg-black/20">
           <div className="flex items-center justify-between text-[10px] md:text-xs">
-            <span className="text-[#8A92A6] font-bold">{date} • {time}</span>
+            <span className="text-[#8A92A6] font-bold">
+              <FormattedDateTime isoString={match.kickoff_time} mode="date" /> • <FormattedDateTime isoString={match.kickoff_time} mode="time" />
+            </span>
             {match.venue && <span className="text-[#8A92A6] font-bold truncate ml-2 hidden sm:inline">{match.venue}</span>}
           </div>
         </div>

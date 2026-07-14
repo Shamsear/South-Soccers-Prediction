@@ -12,6 +12,7 @@ import { createPublicClient } from '@/lib/supabase/server'
 import { CountdownTimer } from '@/components/countdown-timer'
 import { TeamLogoBadge } from '@/components/team-logo-badge'
 import { PublicPredictionsList } from '@/components/public-predictions-list'
+import { FormattedDateTime } from '@/components/formatted-date-time'
 import { formatCompetitionRound, formatGroupName } from '@/lib/format-text'
 import type { Database } from '@/types/database'
 import { ChevronLeft, Calendar, MapPin, LogIn } from 'lucide-react'
@@ -52,18 +53,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-function formatMatchDate(isoString: string): string {
-  const date = new Date(isoString)
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }
-  return date.toLocaleString(undefined, options) // undefined = use browser's locale and timezone
-}
+
 
 function getHostCountryClass(venue: string | null): string {
   if (!venue) return 'ticket-gold'
@@ -243,7 +233,7 @@ export default async function PublicMatchDetailPage({ params }: PageProps) {
           <div className="pt-4 space-y-3 flex flex-col items-center">
             <div className="flex items-center gap-2 text-xs md:text-sm text-[#C1C5D0] font-semibold">
               <Calendar className="w-4 h-4 text-[#F3A81D]" />
-              <span>{formatMatchDate(typedMatch.kickoff_time)}</span>
+              <span><FormattedDateTime isoString={typedMatch.kickoff_time} /></span>
             </div>
             {typedMatch.venue && (
               <div className="flex items-center gap-2 text-xs md:text-sm text-[#C1C5D0] font-semibold">
